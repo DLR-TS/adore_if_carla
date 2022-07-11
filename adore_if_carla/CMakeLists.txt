@@ -1,0 +1,90 @@
+
+# *******************************************************************************
+# * Copyright (C) 2017-2022 German Aerospace Center (DLR). 
+# * Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
+# *
+# * This program and the accompanying materials are made available under the 
+# * terms of the Eclipse Public License 2.0 which is available at
+# * http://www.eclipse.org/legal/epl-2.0.
+# *
+# * SPDX-License-Identifier: EPL-2.0 
+# *
+# * Contributors: 
+# *  Matthias Nichting
+# ********************************************************************************
+
+cmake_minimum_required(VERSION 2.8.3)
+project(adore_if_carla)
+
+add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+set(PACKAGE_VENDOR "DLR TS-KOS-SAI")
+set(PACKAGE_DESCRIPTION ${PROJECT_NAME})
+set(PACKAGE_MAINTAINER "DLR TS-KOS-SAI")
+set(PACKAGE_MAINTAINER_EMAIL "ts-kos-sai@dlr.de")
+
+include(GNUInstallDirs)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+#include(Packing)
+
+set(CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH};/tmp/${PROJECT_NAME}/build/install")
+find_package(catkin REQUIRED COMPONENTS
+	adore_if_ros_msg
+	carla_msgs
+	roscpp
+)
+
+
+
+#generate_messages(
+#    DEPENDENCIES
+#    std_msgs  # Or other packages containing msgs
+#    nav_msgs
+#    geometry_msgs
+#  )
+
+catkin_package(
+  #INCLUDE_DIRS include
+  LIBRARIES adore_if_carla
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs nav_msgs
+  CATKIN_DEPENDS adore_if_ros_msg
+)
+
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
+
+
+add_executable(vehiclestate2adore_node)
+target_sources(vehiclestate2adore_node PRIVATE src/vehiclestate2adore.cpp)
+target_include_directories(vehiclestate2adore_node PRIVATE include ${catkin_INCLUDE_DIRS})
+target_link_libraries(vehiclestate2adore_node PRIVATE ${catkin_LIBRARIES})
+
+add_executable(objects2adore_node)
+target_sources(objects2adore_node PRIVATE src/objects2adore.cpp)
+target_include_directories(objects2adore_node PRIVATE include ${catkin_INCLUDE_DIRS})
+target_link_libraries(objects2adore_node PRIVATE ${catkin_LIBRARIES})
+
+add_executable(clock2simtime_node)
+target_sources(clock2simtime_node PRIVATE src/clock2simtime.cpp)
+target_include_directories(clock2simtime_node PRIVATE include ${catkin_INCLUDE_DIRS})
+target_link_libraries(clock2simtime_node PRIVATE ${catkin_LIBRARIES})
+
+add_executable(controlcommand2carla_node)
+target_sources(controlcommand2carla_node PRIVATE src/controlcommand2carla.cpp)
+target_include_directories(controlcommand2carla_node PRIVATE include ${catkin_INCLUDE_DIRS})
+target_link_libraries(controlcommand2carla_node PRIVATE ${catkin_LIBRARIES})
+
+
+install(
+  TARGETS
+  vehiclestate2adore_node
+  objects2adore_node
+  controlcommand2carla_node
+  clock2simtime_node
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+

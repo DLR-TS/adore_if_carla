@@ -1,0 +1,17 @@
+[submodule "cppcheck_docker"]
+	path = cppcheck_docker
+	url = https://github.com/DLR-TS/cppcheck_docker.git
+	shallow = true
+[submodule "cpplint_docker"]
+	path = cpplint_docker
+	url = https://github.com/DLR-TS/cpplint_docker.git
+	shallow = true
+[submodule "adore_if_ros_msg"]
+	path = adore_if_ros_msg
+	url = https://github.com/DLR-TS/adore_if_ros_msg.git
+	shallow = true
+[submodule "external/ros-bridge"]
+	path = external/ros-bridge
+	url = https://github.com/carla-simulator/ros-bridge.git
+	shallow = true
+	branch = b836457080078f647d4a9d87330862a468d4c171
