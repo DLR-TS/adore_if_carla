@@ -21,7 +21,7 @@ all: build
 
 build:
 	rm -rf ${ROOT_DIR}/${PROJECT}/build
-	# cd external/ros-bridge/docker && ./build.sh -r noetic
+	cd external/ros-bridge/docker && ./build.sh -r noetic
 	cd "${ROOT_DIR}"/adore_if_ros_msg && make
 	cd "${ROOT_DIR}" && \
         touch CATKIN_IGNORE && \
