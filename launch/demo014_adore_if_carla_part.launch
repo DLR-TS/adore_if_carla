@@ -11,18 +11,23 @@
  * Contributors: 
  *   Matthias - initial API and implementation
  ********************************************************************************-->
-<!-- Please note the instructions in the README.md file.-->
+
+
+<!-- Please read the instructions in the README.md file.-->
+
 <launch>
+
   <!-- global parameters -->
   <param name="/use_sim_time" value="false"/>
   <param name="/tcp_no_delay" value="true"/>
   <param name="/use_scheduler" value="false"/>
+  <node name="timer" pkg="adore_if_carla" type="clock2simtime_node" output="screen"/>
 
   <group ns="/vehicle0">
         <param name="carla_namespace" value="ego_vehicle"/>
-        <node name="vehiclestate_carla2adore" pkg="adore_if_carla" type="vehiclestate2adore_node" output="screen" launch-prefix="xterm -e"/>
-        <node name="controlcommand_adore2carla" pkg="adore_if_carla" type="controlcommand2carla_node" output="screen" launch-prefix="xterm -e"/>
-        <node name="objects_carla2adore" pkg="adore_if_carla" type="objects2adore_node" output="screen" launch-prefix="xterm -e"/>
+        <node name="vehiclestate_carla2adore" pkg="adore_if_carla" type="vehiclestate2adore_node" output="screen"/>
+        <node name="controlcommand_adore2carla" pkg="adore_if_carla" type="controlcommand2carla_node" output="screen"/>
+        <node name="objects_carla2adore" pkg="adore_if_carla" type="objects2adore_node" output="screen"/>
     </group>
 
 </launch>
