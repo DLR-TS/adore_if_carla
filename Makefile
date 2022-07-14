@@ -28,6 +28,8 @@ build:
         docker build --network="host" -t ${IMAGE_NAME} . 
 	cd "${ROOT_DIR}" && \
         docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}/build
+	cd "${ROOT_DIR}" && \
+        docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch/Town10HD.xodr launch/Town10HD.xodr
 
 clean: 
 	rm -rf ${ROOT_DIR}/${PROJECT}/build

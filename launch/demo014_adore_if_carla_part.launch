@@ -1,0 +1,28 @@
+<!--********************************************************************************
+ * Copyright (C) 2017-2022 German Aerospace Center (DLR). 
+ * Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
+ *
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0 
+ *
+ * Contributors: 
+ *   Matthias - initial API and implementation
+ ********************************************************************************-->
+<!-- Please note the instructions in the README.md file.-->
+<launch>
+  <!-- global parameters -->
+  <param name="/use_sim_time" value="false"/>
+  <param name="/tcp_no_delay" value="true"/>
+  <param name="/use_scheduler" value="false"/>
+
+  <group ns="/vehicle0">
+        <param name="carla_namespace" value="ego_vehicle"/>
+        <node name="vehiclestate_carla2adore" pkg="adore_if_carla" type="vehiclestate2adore_node" output="screen" launch-prefix="xterm -e"/>
+        <node name="controlcommand_adore2carla" pkg="adore_if_carla" type="controlcommand2carla_node" output="screen" launch-prefix="xterm -e"/>
+        <node name="objects_carla2adore" pkg="adore_if_carla" type="objects2adore_node" output="screen" launch-prefix="xterm -e"/>
+    </group>
+
+</launch>
