@@ -35,6 +35,8 @@ install_nvidia_docker2:
 .PHONY: build
 build:
 	rm -rf ${ROOT_DIR}/${PROJECT}/build
+	-patch -N external/ros-bridge/install_dependencies.sh ros-bridge_install_dependencies.patch
+	rm -f external/ros-bridge/install_dependencies.sh.rej
 	cd external/ros-bridge/docker && ./build.sh -r noetic
 	cd "${ROOT_DIR}"/adore_if_ros_msg && make
 	cd "${ROOT_DIR}" && \
