@@ -44,9 +44,11 @@ build:
         docker build --network="host" -t ${IMAGE_NAME} . 
 	cd "${ROOT_DIR}" && \
         docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
+        docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch ${PROJECT}
 
 .PHONY: clean 
 clean: 
 	rm -rf ${ROOT_DIR}/${PROJECT}/build
+	rm -rf ${ROOT_DIR}/${PROJECT}/launch
 	docker rm $$(docker ps -a -q --filter "ancestor=${IMAGE_NAME}") 2> /dev/null || true
 	docker rmi $$(docker images -q ${IMAGE_NAME}) 2> /dev/null || true
