@@ -1,0 +1,10 @@
+--- install_dependencies.sh	2022-08-19 18:26:26.456036465 +0200
++++ install_dependencies_patched.sh	2022-08-19 18:27:00.384036986 +0200
+@@ -42,6 +42,7 @@
+     wget \
+     qt5-default \
+     ros-$ROS_DISTRO-pcl-conversions \
++    librviz-dev \
+     $ADDITIONAL_PACKAGES
+ 
+ pip$PYTHON_SUFFIX install --upgrade pip$PYTHON_SUFFIX

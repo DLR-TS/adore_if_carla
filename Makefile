@@ -35,16 +35,19 @@ install_nvidia_docker2:
 .PHONY: build
 build:
 	rm -rf ${ROOT_DIR}/${PROJECT}/build
+	-patch -N external/ros-bridge/install_dependencies.sh ros-bridge_install_dependencies.patch
+	rm -f external/ros-bridge/install_dependencies.sh.rej
 	cd external/ros-bridge/docker && ./build.sh -r noetic
 	cd "${ROOT_DIR}"/adore_if_ros_msg && make
 	cd "${ROOT_DIR}" && \
         touch CATKIN_IGNORE && \
         docker build --network="host" -t ${IMAGE_NAME} . 
-	cd "${ROOT_DIR}" && \
-        docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch ${PROJECT}
 
 .PHONY: clean 
 clean: 
 	rm -rf ${ROOT_DIR}/${PROJECT}/build
+	rm -rf ${ROOT_DIR}/${PROJECT}/launch
 	docker rm $$(docker ps -a -q --filter "ancestor=${IMAGE_NAME}") 2> /dev/null || true
 	docker rmi $$(docker images -q ${IMAGE_NAME}) 2> /dev/null || true

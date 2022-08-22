@@ -14,4 +14,4 @@
 	path = external/ros-bridge
 	url = https://github.com/carla-simulator/ros-bridge.git
 	shallow = true
-	branch = b836457080078f647d4a9d87330862a468d4c171
+	branch = f47454a0b644d69b7fcef0e0f71fbf02c8ce3a07

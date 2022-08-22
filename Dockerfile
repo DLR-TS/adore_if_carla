@@ -1,7 +1,7 @@
 ARG PROJECT="adore_if_carla"
 ARG REQUIREMENTS_FILE="requirements.${PROJECT}.build.ubuntu20.04.system"
 
-FROM carlasim/carla:0.9.11 AS carlasim_carla
+FROM carlasim/carla:0.9.12 AS carlasim_carla
 FROM adore_if_ros_msg:latest AS adore_if_ros_msg
 FROM ros:noetic-ros-core-focal AS adore_if_carla_builder
 
@@ -14,6 +14,9 @@ ARG REQUIREMENTS_FILE
 RUN mkdir -p /tmp/${PROJECT}
 RUN mkdir -p build 
 WORKDIR /tmp/${PROJECT}
+RUN mkdir -p /tmp/${PROJECT}/launch
+copy launchfiles/demo014_adore_if_carla_part.launch /tmp/${PROJECT}/launch
+COPY --from=carlasim_carla /home/carla/CarlaUE4/Content/Carla/Maps/OpenDrive/Town10HD.xodr /tmp/${PROJECT}/launch/Town10HD.xodr
 copy files/${REQUIREMENTS_FILE} /tmp/${PROJECT}
 
 
