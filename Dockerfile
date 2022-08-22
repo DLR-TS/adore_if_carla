@@ -14,9 +14,9 @@ ARG REQUIREMENTS_FILE
 RUN mkdir -p /tmp/${PROJECT}
 RUN mkdir -p build 
 WORKDIR /tmp/${PROJECT}
-RUN mkdir -p /tmp/${PROJECT}/launch
+RUN mkdir -p /tmp/${PROJECT}/launch/tracks
 copy launch/demo014_adore_if_carla_part.launch /tmp/${PROJECT}/launch
-COPY --from=carlasim_carla /home/carla/CarlaUE4/Content/Carla/Maps/OpenDrive/Town10HD.xodr /tmp/${PROJECT}/launch/Town10HD.xodr
+COPY --from=carlasim_carla /home/carla/CarlaUE4/Content/Carla/Maps/OpenDrive/Town10HD.xodr /tmp/${PROJECT}/launch/tracks/Town10HD.xodr
 copy files/${REQUIREMENTS_FILE} /tmp/${PROJECT}
 
 

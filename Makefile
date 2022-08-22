@@ -42,9 +42,8 @@ build:
 	cd "${ROOT_DIR}" && \
         touch CATKIN_IGNORE && \
         docker build --network="host" -t ${IMAGE_NAME} . 
-	cd "${ROOT_DIR}" && \
-        docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
-        docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch ${PROJECT}
 
 .PHONY: clean 
 clean: 
