@@ -5,7 +5,7 @@ SHELL:=/bin/bash
 PROJECT="adore_if_carla"
 VERSION="latest"
 IMAGE_NAME="${PROJECT}:${VERSION}"
-ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
 
 .EXPORT_ALL_VARIABLES:
 DOCKER_BUILDKIT?=1
