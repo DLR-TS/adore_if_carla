@@ -20,5 +20,13 @@
 
 nvidia-docker2 must be installed on the host system. Instructions can be found here: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
 
-During build, the Dockerfile of the carlasimulator/ros-bridge:0.9.12 is built and the carlasim/carla:0.9.12 docker image is pulled from dockerhub.
-The run.sh starts containers of these two images as well as the also built adore_if_carla container.
+Build by typing "make".
+During build, the Dockerfile of the carlasimulator/ros-bridge is built and the carlasim/carla:0.9.13 docker image is pulled from dockerhub.
+
+Start the demo by following these steps:
+Type "xhost local:root".
+Type "docker compose up".
+Start the demo014 of adore_if_ros_demos.
+
+If "docker compose up" does not work, try to execute the following commands step by step:
+"docker compose up carla", "docker compose up carla-ros-bridge", "docker compose up adore_if_carla"

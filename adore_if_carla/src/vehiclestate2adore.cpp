@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <nav_msgs/Odometry.h>
 #include <carla_msgs/CarlaEgoVehicleStatus.h>
+#include <carla_msgs/CarlaEgoVehicleInfo.h>
+#include <sensor_msgs/Imu.h>
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Float32.h>
@@ -32,24 +34,27 @@ namespace adore
     {
         class VehicleState2Adore
         {
-          public:
+        public:
             VehicleState2Adore()
             {
             }
-            void init(int argc, char** argv, double rate, std::string nodename)
+            void init(int argc, char **argv, double rate, std::string nodename)
             {
                 // Although the application has no periodically called functions, the rate is required for scheduling
                 ros::init(argc, argv, nodename);
-                ros::NodeHandle* n = new ros::NodeHandle();
+                ros::NodeHandle *n = new ros::NodeHandle();
                 n_ = n;
                 initSim();
-                bool carla_namespace_specified = getRosNodeHandle()->getParam("carla_namespace", namespace_carla_);
+                bool carla_namespace_specified = getRosNodeHandle()->getParam("PARAMS/adore_if_carla/carla_namespace", namespace_carla_);
                 std::cout << "VehicleState2Adore: namespace of the carla vehicle is: "
                           << (carla_namespace_specified ? namespace_carla_ : "NOT SPECIFIED") << std::endl;
+                use_imu_ = true;
                 initROSConnections();
                 carla_autopilot_enabled_ = false;
                 adore_automation_enabled_ = false;
                 publish_checkpoint_clearance_dummy_ = true;
+                carla_ego_vehicle_max_steer_angle_ = 1.0;
+                
 
                 for (int i = 0; i < argc; ++i)
                 {
@@ -86,10 +91,12 @@ namespace adore
                 adore_automation_enabled_ = value;
             }
 
-          private:
+        private:
             std::string namespace_carla_;
             ros::Subscriber subscriber_vehicle_state_;
+            ros::Subscriber subscriber_vehicle_info_;
             ros::Subscriber subscriber_vehicle_status_;
+            ros::Subscriber subscriber_vehicle_imu_;
             ros::Subscriber subscriber_autopilot_;
             ros::Publisher publisher_vehicle_state_odom_;
             ros::Publisher publisher_vehicle_state_localization_;
@@ -105,13 +112,16 @@ namespace adore
             bool carla_autopilot_enabled_;
             bool adore_automation_enabled_;
             bool publish_checkpoint_clearance_dummy_;
+            carla_msgs::CarlaEgoVehicleInfo carla_ego_vehicle_info_;
+            double carla_ego_vehicle_max_steer_angle_;
             ros::Timer timer_;
-            ros::NodeHandle* n_;
+            ros::NodeHandle *n_;
+            bool use_imu_;
 
             void initSim()
             {
             }
-            ros::NodeHandle* getRosNodeHandle()
+            ros::NodeHandle *getRosNodeHandle()
             {
                 return n_;
             }
@@ -122,10 +132,17 @@ namespace adore
                 publisher_vehicle_state_odom_ = getRosNodeHandle()->advertise<nav_msgs::Odometry>("odom", 1);
                 publisher_vehicle_state_localization_ =
                     getRosNodeHandle()->advertise<nav_msgs::Odometry>("localization", 1);
-
+                subscriber_vehicle_info_ = getRosNodeHandle()->subscribe<carla_msgs::CarlaEgoVehicleInfo>(
+                    "/carla/" + namespace_carla_ + "/vehicle_info", 1, &VehicleState2Adore::receiveVehicleInfo, this);
                 subscriber_vehicle_status_ = getRosNodeHandle()->subscribe<carla_msgs::CarlaEgoVehicleStatus>(
                     "/carla/" + namespace_carla_ + "/vehicle_status", 1, &VehicleState2Adore::receiveVehicleStatus,
                     this);
+                if (use_imu_)
+                {
+                    subscriber_vehicle_imu_ = getRosNodeHandle()->subscribe<sensor_msgs::Imu>(
+                        "/carla/" + namespace_carla_ + "/imu", 1, &VehicleState2Adore::receiveVehicleImu,
+                        this);
+                }
                 publisher_longitudinal_acceleration_ = getRosNodeHandle()->advertise<std_msgs::Float32>("VEH/ax", 1);
                 publisher_steering_angle_ =
                     getRosNodeHandle()->advertise<std_msgs::Float32>("VEH/steering_angle_measured", 1);
@@ -147,7 +164,7 @@ namespace adore
                 publisher_right_indicator_ =
                     getRosNodeHandle()->advertise<std_msgs::Bool>("VEH/IndicatorState/right", 1);
             }
-            void receiveOdometry(const nav_msgs::OdometryConstPtr& in_msg)
+            void receiveOdometry(const nav_msgs::OdometryConstPtr &in_msg)
             {
                 double w, x, y, z;
                 double yaw;
@@ -193,7 +210,12 @@ namespace adore
                 publisher_vehicle_state_odom_.publish(out_msg);
                 publisher_vehicle_state_localization_.publish(out_msg);
             }
-            void receiveVehicleStatus(const carla_msgs::CarlaEgoVehicleStatusConstPtr& in_msg)
+            void receiveVehicleInfo(const carla_msgs::CarlaEgoVehicleInfoConstPtr &in_msg)
+            {
+                carla_ego_vehicle_info_.wheels = in_msg->wheels;
+                carla_ego_vehicle_max_steer_angle_ = carla_ego_vehicle_info_.wheels[0].max_steer_angle;
+            }
+            void receiveVehicleStatus(const carla_msgs::CarlaEgoVehicleStatusConstPtr &in_msg)
             {
                 double w, x, y, z;
                 double roll, pitch, yaw;
@@ -224,12 +246,15 @@ namespace adore
                     std::cos(yaw) * in_msg->acceleration.linear.x - std::sin(yaw) * in_msg->acceleration.linear.y;
                 double lat_accel =
                     std::sin(yaw) * in_msg->acceleration.linear.x + std::cos(yaw) * in_msg->acceleration.linear.y;
-                std_msgs::Float32 ax_msg;
-                ax_msg.data = lon_accel;
-                publisher_longitudinal_acceleration_.publish(ax_msg);
-                // todo: steering angle or steering wheel angle?
+                if (!use_imu_)
+                {
+                    std_msgs::Float32 ax_msg;
+                    ax_msg.data = lon_accel;
+                    publisher_longitudinal_acceleration_.publish(ax_msg);
+                }
                 std_msgs::Float32 steering_msg;
-                steering_msg.data = -20 * in_msg->control.steer;
+                // steering_msg.data = -carla_ego_vehicle_max_steer_angle_ * getSteeringGain() * in_msg->control.steer;
+                steering_msg.data = in_msg->control.steer;
                 publisher_steering_angle_.publish(steering_msg);
                 std_msgs::Int8 gear_state_msg;
                 int gear = in_msg->control.gear;
@@ -249,7 +274,14 @@ namespace adore
                 }
                 publisher_gear_state_.publish(gear_state_msg);
             }
-            void receiveCarlaAutopilot(const std_msgs::BoolConstPtr& in_msg)
+            void receiveVehicleImu(const sensor_msgs::Imu::ConstPtr &in_msg)
+            {
+                double lon_accel = in_msg->linear_acceleration.x;
+                std_msgs::Float32 ax_msg;
+                ax_msg.data = lon_accel;
+                publisher_longitudinal_acceleration_.publish(ax_msg);
+            }
+            void receiveCarlaAutopilot(const std_msgs::BoolConstPtr &in_msg)
             {
                 carla_autopilot_enabled_ = in_msg->data;
                 if (carla_autopilot_enabled_)
@@ -281,14 +313,14 @@ namespace adore
                 publisher_left_indicator_.publish(out_msg);
                 publisher_right_indicator_.publish(out_msg);
             }
-            void periodic_run(const ros::TimerEvent& te)
+            void periodic_run(const ros::TimerEvent &te)
             {
                 publish_adore_automation_state();
                 publish_dummy_checkpoints_clearance_and_indicators();
             }
         };
-    }  // namespace adore_if_carla
-}  // namespace adore
+    } // namespace adore_if_carla
+} // namespace adore
 
 adore::adore_if_carla::VehicleState2Adore vehiclestate2adore;
 bool terminated = false;
@@ -317,7 +349,7 @@ void kbinput()
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     std::thread kbinput_thread(kbinput);
     vehiclestate2adore.init(argc, argv, 10.0, "vehiclestate2adore");
