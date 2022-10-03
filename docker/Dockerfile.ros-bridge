@@ -1,0 +1,34 @@
+FROM carlasim/carla:0.9.13 as carla
+
+FROM ros:noetic-ros-base
+
+ARG CARLA_VERSION
+ARG ROS_DISTRO
+
+ENV CARLA_VERSION=$CARLA_VERSION
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN mkdir -p /opt/carla-ros-bridge/src
+RUN mkdir -p /opt/carla-ros-bridge/launchfiles
+WORKDIR /opt/carla-ros-bridge
+
+COPY --from=carla /home/carla/PythonAPI /opt/carla/PythonAPI
+
+COPY external/ros-bridge/requirements.txt /opt/carla-ros-bridge
+COPY external/ros-bridge/install_dependencies.sh /opt/carla-ros-bridge
+COPY ros-bridge_files/local /opt/carla-ros-bridge/launchfiles
+
+RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash; \
+    bash /opt/carla-ros-bridge/install_dependencies.sh; \
+    sudo apt-get install --no-install-recommends -y librviz-dev; \
+    echo "export PYTHONPATH=\$PYTHONPATH:/opt/carla/PythonAPI/carla/dist/$(ls /opt/carla/PythonAPI/carla/dist | grep py$ROS_PYTHON_VERSION.)" >> /opt/carla/setup.bash; \
+    echo "export PYTHONPATH=\$PYTHONPATH:/opt/carla/PythonAPI/carla" >> /opt/carla/setup.bash'
+
+COPY external/ros-bridge /opt/carla-ros-bridge/src/
+RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash; \
+    catkin_make install;'
+
+# replace entrypoint
+COPY external/ros-bridge/docker/content/ros_entrypoint.sh /
+
+

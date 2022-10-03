@@ -29,13 +29,23 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #include(Packing)
 
 set(CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH};/tmp/${PROJECT_NAME}/build/install")
+list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../plotlablib/plotlablib/build/install")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cppzmq/build/install/share/cmake/cppzmq")
+#/share/cmake/cppzmq/cppzmqConfig.cmake
+message(WARNING ${CMAKE_CURRENT_SOURCE_DIR})
+
+
 find_package(catkin REQUIRED COMPONENTS
 	adore_if_ros_msg
 	carla_msgs
 	roscpp
+  ackermann_msgs
 )
 
-
+find_package(plotlablib CONFIG REQUIRED)
+find_package(cppzmq CONFIG REQUIRED)
+find_package(ZeroMQ CONFIG REQUIRED)
 
 #generate_messages(
 #    DEPENDENCIES
@@ -47,7 +57,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   #INCLUDE_DIRS include
   LIBRARIES adore_if_carla
-  CATKIN_DEPENDS roscpp std_msgs geometry_msgs nav_msgs
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs nav_msgs ackermann_msgs
   CATKIN_DEPENDS adore_if_ros_msg
 )
 
@@ -77,14 +87,33 @@ target_sources(controlcommand2carla_node PRIVATE src/controlcommand2carla.cpp)
 target_include_directories(controlcommand2carla_node PRIVATE include ${catkin_INCLUDE_DIRS})
 target_link_libraries(controlcommand2carla_node PRIVATE ${catkin_LIBRARIES})
 
+add_executable(ackermanncommand2carla_node)
+target_sources(ackermanncommand2carla_node PRIVATE src/ackermanncommand2carla.cpp)
+target_include_directories(ackermanncommand2carla_node PRIVATE include ${catkin_INCLUDE_DIRS})
+target_link_libraries(ackermanncommand2carla_node PRIVATE ${catkin_LIBRARIES})
+
+add_executable(plot_longitudinal_control_info_node src/plot_longitudinal_control_info.cpp)
+target_include_directories(plot_longitudinal_control_info_node PRIVATE include ${catkin_INCLUDE_DIRS})
+target_link_libraries(plot_longitudinal_control_info_node
+                        PRIVATE 
+                          ${catkin_LIBRARIES}
+                          plotlablib::plotlablib
+)
 
 install(
   TARGETS
   vehiclestate2adore_node
   objects2adore_node
   controlcommand2carla_node
+  ackermanncommand2carla_node
   clock2simtime_node
+  plot_longitudinal_control_info_node
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 
+install(
+  FILES
+  src/vehicle_physics.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
