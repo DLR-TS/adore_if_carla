@@ -25,6 +25,8 @@ RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash; \
     echo "export PYTHONPATH=\$PYTHONPATH:/opt/carla/PythonAPI/carla" >> /opt/carla/setup.bash'
 
 COPY external/ros-bridge /opt/carla-ros-bridge/src/
+COPY ros-bridge_files/local/settings.ros1.yaml /opt/carla-ros-bridge/src/carla_ackermann_control/config
+
 RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash; \
     catkin_make install;'
 

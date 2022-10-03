@@ -114,6 +114,5 @@ install(
 
 install(
   FILES
-  src/vehicle_physics.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
