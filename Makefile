@@ -36,15 +36,9 @@ install_nvidia_docker2:
 build:
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
-#	-patch -N external/ros-bridge/install_dependencies.sh ros-bridge_install_dependencies.patch
-#	rm -f external/ros-bridge/install_dependencies.sh.rej
-#	cd "${ROOT_DIR}" && docker build --network="host" -t carla-ros-bridge:for_adore_if_carla -f ros-bridge_files/Dockerfile .
 	cd "${ROOT_DIR}"/adore_if_ros_msg && make
 	cd "${ROOT_DIR}"/plotlablib && make
 	cd "${ROOT_DIR}" && docker compose build
-#	cd "${ROOT_DIR}" && \
-#        touch CATKIN_IGNORE && \
-#        docker build --network="host" -t ${IMAGE_NAME} . 
 	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
 	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch ${PROJECT}
 
