@@ -122,7 +122,9 @@ namespace adore
             }
             void receiveSteeringCommand(const std_msgs::Float32ConstPtr &in_msg)
             {
-                steering_command_ = in_msg->data;
+                double steering_ratio = 1.0;
+                n_->getParamCached("PARAMS/Vehicle/steeringRatio",steering_ratio);
+                steering_command_ = in_msg->data / steering_ratio;
                 b_received_steer_ = true;
                 transmitControlCommand();
             }
