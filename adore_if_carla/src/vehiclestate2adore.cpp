@@ -213,7 +213,21 @@ namespace adore
             void receiveVehicleInfo(const carla_msgs::CarlaEgoVehicleInfoConstPtr &in_msg)
             {
                 carla_ego_vehicle_info_.wheels = in_msg->wheels;
-                carla_ego_vehicle_max_steer_angle_ = carla_ego_vehicle_info_.wheels[0].max_steer_angle;
+                carla_ego_vehicle_max_steer_angle_ = 5.0;
+                bool use_default_max_steer_angle = true;
+                for (auto wheel:carla_ego_vehicle_info_.wheels)
+                {
+                    if (wheel.max_steer_angle>0.0 && wheel.max_steer_angle < carla_ego_vehicle_max_steer_angle_)
+                    {
+                        use_default_max_steer_angle = false;
+                        carla_ego_vehicle_max_steer_angle_ = wheel.max_steer_angle;
+                    }
+                }
+                if (use_default_max_steer_angle)
+                {
+                    std::cout << "vehiclestate2adore: default max steer angle used!"<<std::endl;
+                    carla_ego_vehicle_max_steer_angle_ = 1.22;
+                }
             }
             void receiveVehicleStatus(const carla_msgs::CarlaEgoVehicleStatusConstPtr &in_msg)
             {
@@ -253,8 +267,7 @@ namespace adore
                     publisher_longitudinal_acceleration_.publish(ax_msg);
                 }
                 std_msgs::Float32 steering_msg;
-                // steering_msg.data = -carla_ego_vehicle_max_steer_angle_ * getSteeringGain() * in_msg->control.steer;
-                steering_msg.data = in_msg->control.steer;
+                steering_msg.data = -carla_ego_vehicle_max_steer_angle_ * in_msg->control.steer;
                 publisher_steering_angle_.publish(steering_msg);
                 std_msgs::Int8 gear_state_msg;
                 int gear = in_msg->control.gear;
