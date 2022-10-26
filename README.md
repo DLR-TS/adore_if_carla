@@ -30,5 +30,5 @@ Start the demo by following these steps:
 
 If "docker compose up" does not work, try to execute the following commands step by step:
 - docker compose up carla
-- docker compose up carla-ros-bridge
+- xhost local:root; docker compose up carla-ros-bridge
 - docker compose up adore_if_carla
