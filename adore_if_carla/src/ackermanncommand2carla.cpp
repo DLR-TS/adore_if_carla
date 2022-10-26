@@ -162,18 +162,6 @@ namespace adore
                 ackermann_cmd.acceleration = acceleration_command_;
                 ackermann_cmd.jerk = 0.0;
 
-                // for (int i = 0; i < last_spr_.setPoints.size(); ++i)
-                // {
-                //     if (last_spr_.setPoints.at(i).tStart <= current_time_ && last_spr_.setPoints.at(i).tEnd > current_time_)
-                //     {
-                //         ackermann_cmd.steering_angle_velocity = last_spr_.setPoints.at(i).ddelta ;
-                //         ackermann_cmd.speed = std::max(last_spr_.setPoints.at(i).vx,0.5);
-                //         //ackermann_cmd.acceleration = last_spr_.setPoints.at(i).ax;
-                //         //ackermann_cmd.jerk = last_spr_.setPoints.at(i).dax;
-                //         break;
-                //     }
-                // }
-
                 publisher_ackermann_command_.publish(ackermann_cmd);
             }
         };
