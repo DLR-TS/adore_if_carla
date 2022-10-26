@@ -29,6 +29,6 @@ Start the demo by following these steps:
 - Start the demo014 of adore_if_ros_demos.
 
 If "docker compose up" does not work, try to execute the following commands step by step:
-- docker compose up carla
-- xhost local:root; docker compose up carla-ros-bridge
-- docker compose up adore_if_carla
+- "docker compose up carla"
+- "xhost local:root; docker compose up carla-ros-bridge"
+- "docker compose up adore_if_carla"
