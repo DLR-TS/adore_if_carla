@@ -42,7 +42,7 @@ namespace adore
                 n_ = n;
                 initSim();
                 bool carla_namespace_specified = n_->getParam("PARAMS/adore_if_carla/carla_namespace", namespace_carla_);
-                std::cout << "ControlCommand2Carla: namespace of the carla vehicle is: "
+                std::cout << "AckermannCommand2Carla: namespace of the carla vehicle is: "
                           << (carla_namespace_specified ? namespace_carla_ : "NOT SPECIFIED") << std::endl;
                 initROSConnections();
             }
@@ -170,8 +170,8 @@ namespace adore
 
 int main(int argc, char **argv)
 {
-    adore::adore_if_carla::AckermannCommand2Carla controlcommand2carla;
-    controlcommand2carla.init(argc, argv, 100.0, "controlcommand2carla");
-    controlcommand2carla.run();
+    adore::adore_if_carla::AckermannCommand2Carla ackermanncommand2carla;
+    ackermanncommand2carla.init(argc, argv, 100.0, "ackermanncommand2carla");
+    ackermanncommand2carla.run();
     return 0;
 }
