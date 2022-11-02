@@ -16,6 +16,7 @@
 -->
 # adore_if_carla
 An interface package, which enables ADORe to control CARLA autonomous vehicles via carla-ros-bridge.
+
 **Note: adore_if_carla is experimental**
 
 ## Getting Started
@@ -27,9 +28,9 @@ During build, the Dockerfile of the carlasimulator/ros-bridge is built and the c
 Start the demo by following these steps, (replace adore project folder path as necessary):
 ~~~bash
 cd ~/adore/adore_if_carla
-xterm -e "docker compose up carla"
-xterm -e "xhost local:root;docker compose up carla-ros-bridge"
-xterm -e "docker compose up adore_if_carla"
+xterm -e "docker compose up carla" &
+xterm -e "xhost local:root;docker compose up carla-ros-bridge" &
+xterm -e "docker compose up adore_if_carla" &
 cd ~/adore/  
 make run_test_scenarios demo014_adore_if_carla.launch
 ~~~
