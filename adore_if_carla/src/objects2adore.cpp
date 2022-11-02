@@ -43,8 +43,8 @@ namespace adore
                 ros::NodeHandle* n = new ros::NodeHandle();
                 n_ = n;
                 initSim();
-                bool carla_namespace_specified = n_->getParam("carla_namespace", namespace_carla_);
-                std::cout << "VehicleState2Adore: namespace of the carla vehicle is: "
+                bool carla_namespace_specified = n_->getParam("PARAMS/adore_if_carla/carla_namespace", namespace_carla_);
+                std::cout << "Objects2Adore: namespace of the carla vehicle is: "
                           << (carla_namespace_specified ? namespace_carla_ : "NOT SPECIFIED") << std::endl;
                 initROSConnections();
             }

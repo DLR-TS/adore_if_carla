@@ -14,4 +14,8 @@
 	path = external/ros-bridge
 	url = https://github.com/carla-simulator/ros-bridge.git
 	shallow = true
-	branch = f47454a0b644d69b7fcef0e0f71fbf02c8ce3a07
+	ignore = dirty
+	branch = e9063d97ff5a724f76adbb1b852dc71da1dcfeec
+[submodule "plotlablib"]
+	path = plotlablib
+	url = https://github.com/DLR-TS/plotlablib.git

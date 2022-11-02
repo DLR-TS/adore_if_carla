@@ -1,8 +1,13 @@
 ARG PROJECT="adore_if_carla"
 ARG REQUIREMENTS_FILE="requirements.${PROJECT}.build.ubuntu20.04.system"
 
-FROM carlasim/carla:0.9.12 AS carlasim_carla
+FROM carlasim/carla:0.9.13 AS carlasim_carla
 FROM adore_if_ros_msg:latest AS adore_if_ros_msg
+
+FROM plotlablib:latest AS plotlablib
+FROM libzmq:latest AS libzmq
+FROM cppzmq:latest AS cppzmq
+
 FROM ros:noetic-ros-core-focal AS adore_if_carla_builder
 
 
@@ -28,7 +33,7 @@ COPY --from=adore_if_ros_msg /tmp/adore_if_ros_msg /tmp/adore_if_ros_msg
 WORKDIR /tmp/adore_if_ros_msg/build
 RUN cmake --install . --prefix /tmp/${PROJECT}/build/install
 
-copy files external/ros-bridge/carla_msgs /tmp/carla_msgs
+copy files external/ros-bridge/carla_msgs/ /tmp/carla_msgs/
 SHELL ["/bin/bash", "-c"]
 WORKDIR /tmp/carla_msgs
 RUN source /opt/ros/noetic/setup.bash && \
@@ -45,6 +50,24 @@ RUN source /opt/ros/noetic/setup.bash && \
 
 COPY ${PROJECT} /tmp/${PROJECT}
 #copy files/catkin_build.sh /tmp/${PROJECT}
+
+ARG LIB=plotlablib
+COPY --from=plotlablib /tmp/${LIB} /tmp/${PROJECT}/${LIB}
+SHELL ["/bin/bash", "-c"]
+WORKDIR /tmp/${PROJECT}/${LIB}/${LIB}/build
+RUN cmake .. -DCMAKE_PREFIX_PATH=`realpath install` && \
+    cmake --install . --prefix ${INSTALL_PREFIX}
+RUN dpkg -i *.deb
+
+ARG LIB=libzmq
+COPY --from=libzmq /tmp/${LIB} /tmp/${LIB}
+WORKDIR /tmp/${LIB}/build
+RUN cmake --install . --prefix ${INSTALL_PREFIX}
+
+ARG LIB=cppzmq
+COPY --from=cppzmq /tmp/${LIB} /tmp/${LIB}
+WORKDIR /tmp/${LIB}/build
+RUN cmake --install . --prefix ${INSTALL_PREFIX}
 
 
 

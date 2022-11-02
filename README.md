@@ -14,11 +14,23 @@
 *   Jan Lauermann 
 ********************************************************************************
 -->
-# ADORe Interface to CARLA using ROS and carla-ros-bridge
+# adore_if_carla
+An interface package, which enables ADORe to control CARLA autonomous vehicles via carla-ros-bridge.
 
 **Note: adore_if_carla is experimental**
 
+## Getting Started
 nvidia-docker2 must be installed on the host system. Instructions can be found here: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
 
-During build, the Dockerfile of the carlasimulator/ros-bridge:0.9.12 is built and the carlasim/carla:0.9.12 docker image is pulled from dockerhub.
-The run.sh starts containers of these two images as well as the also built adore_if_carla container.
+Build by executing ```make``` in the project folder.
+During build, the Dockerfile of the carlasimulator/ros-bridge is built and the carlasim/carla:0.9.13 docker image is pulled from dockerhub.
+
+Start the demo by following these steps, (replace adore project folder path as necessary):
+~~~bash
+cd ~/adore/adore_if_carla
+xterm -e "docker compose up carla" &
+xterm -e "xhost local:root;docker compose up carla-ros-bridge" &
+xterm -e "docker compose up adore_if_carla" &
+cd ~/adore/  
+make run_scenarios TEST_SCENARIOS=demo014_adore_if_carla.launch
+~~~

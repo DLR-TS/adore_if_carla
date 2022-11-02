@@ -4,4 +4,11 @@ gcc
 g++
 python3-catkin-tools
 ros-noetic-roscpp-core
+ros-noetic-ackermann-msgs
 ros-noetic-derived-object-msgs
+
+libzmq3-dev 
+libzmq5 
+libzmqpp-dev
+libzmqpp4
+
