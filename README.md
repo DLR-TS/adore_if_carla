@@ -32,5 +32,5 @@ xterm -e "docker compose up carla" &
 xterm -e "xhost local:root;docker compose up carla-ros-bridge" &
 xterm -e "docker compose up adore_if_carla" &
 cd ~/adore/  
-make run_test_scenarios demo014_adore_if_carla.launch
+make run_test_scenarios TEST_SCENARIOS=demo014_adore_if_carla.launch
 ~~~
