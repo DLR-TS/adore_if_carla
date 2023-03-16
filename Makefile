@@ -2,27 +2,21 @@ SHELL:=/bin/bash
 
 .DEFAULT_GOAL := all
 
-PROJECT="adore_if_carla"
-VERSION="latest"
-IMAGE_NAME="${PROJECT}:${VERSION}"
 ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
+MAKEFILE_PATH:=$(shell dirname "$(abspath "$(lastword $(MAKEFILE_LIST)"))")
+
+MAKEFLAGS += --no-print-directory
+
+$(shell git submodule update --init --recursive --depth 1 ${ROOT_DIR}/external/*)
+
+include adore_if_carla.mk
 
 .EXPORT_ALL_VARIABLES:
 DOCKER_BUILDKIT?=1
 DOCKER_CONFIG?=
 
-
-.PHONY: help
-help:
-	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
 .PHONY: all 
 all: build
-
-.PHONY: update_submodules
-update_submodules:
-	git submodule update --init --recursive	
-
 
 .PHONY: run
 run:
