@@ -1,4 +1,4 @@
-FROM carlasim/carla:0.9.13 as carla
+FROM ${CARLA_TAG} as carla
 
 FROM ros:noetic-ros-base
 

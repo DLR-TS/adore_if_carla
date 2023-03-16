@@ -7,6 +7,7 @@ MAKEFILE_PATH:=$(shell dirname "$(abspath "$(lastword $(MAKEFILE_LIST)"))")
 
 MAKEFLAGS += --no-print-directory
 
+# auto clone mandatory submodules
 $(shell git submodule update --init --recursive --depth 1 ${ROOT_DIR}/external/*)
 
 include adore_if_carla.mk
@@ -16,7 +17,12 @@ DOCKER_BUILDKIT?=1
 DOCKER_CONFIG?=
 
 .PHONY: all 
-all: build
+all: help
+
+.PHONY: set_env 
+set_env: 
+	$(eval PROJECT := ${ADORE_IF_CARLA_PROJECT}) 
+	$(eval TAG := ${ADORE_IF_CARLA_TAG})
 
 .PHONY: run
 run:
@@ -27,18 +33,21 @@ install_nvidia_docker2:
 	bash install_nvidia_docker2.sh 
 
 .PHONY: build
-build:
+build: set_env start_apt_cacher_ng _build get_cache_statistics ## Build adore_if_carla 
+
+.PHONY: _build
+_build:
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
 	cd "${ROOT_DIR}"/adore_if_ros_msg && make
 	cd "${ROOT_DIR}"/plotlablib && make
 	cd "${ROOT_DIR}" && docker compose build
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/build ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/launch ${PROJECT}
 
 .PHONY: clean 
 clean: 
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
-	docker rm $$(docker ps -a -q --filter "ancestor=${IMAGE_NAME}") 2> /dev/null || true
-	docker rmi $$(docker images -q ${IMAGE_NAME}) 2> /dev/null || true
+	docker rm $$(docker ps -a -q --filter "ancestor=${PROJECT}:${TAG}") 2> /dev/null || true
+	docker rmi $$(docker images -q ${PROJECT}:${TAG}) --force 2> /dev/null || true

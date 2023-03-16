@@ -1,10 +1,15 @@
 ARG PROJECT="adore_if_carla"
 ARG REQUIREMENTS_FILE="requirements.${PROJECT}.build.ubuntu20.04.system"
 
-FROM carlasim/carla:0.9.13 AS carlasim_carla
-FROM adore_if_ros_msg:latest AS adore_if_ros_msg
+ARG ADORE_IF_ROS_MSG_TAG=latest
+ARG LIBADORE_TAG=latest
+ARG PLOTLABLIB_TAG=latest
 
-FROM plotlablib:latest AS plotlablib
+FROM adore_if_ros_msg:${ADORE_IF_ROS_MSG_TAG} AS adore_if_ros_msg
+FROM plotlablib:${PLOTLABLIB_TAG} AS plotlablib
+
+FROM ${CARLA_TAG} AS carlasim_carla
+
 FROM libzmq:latest AS libzmq
 FROM cppzmq:latest AS cppzmq
 

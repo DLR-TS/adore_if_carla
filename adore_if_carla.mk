@@ -7,6 +7,8 @@ MAKEFLAGS += --no-print-directory
 .EXPORT_ALL_VARIABLES:
 ADORE_IF_CARLA_PROJECT:=adore_if_carla
 
+CARLA_TAG:=carlasim/carla:0.9.13
+
 ADORE_IF_CARLA_MAKEFILE_PATH:=$(strip $(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")"))
 ifeq ($(SUBMODULES_PATH),)
     ADORE_IF_CARLA_SUBMODULES_PATH:=${ADORE_IF_CARLA_MAKEFILE_PATH}
@@ -39,13 +41,10 @@ ADORE_IF_CARLA_CMAKE_INSTALL_PATH:="${ADORE_IF_CARLA_CMAKE_BUILD_PATH}/install"
 
 include ${MAKE_GADGETS_PATH}/make_gadgets.mk
 include ${MAKE_GADGETS_PATH}/docker/docker-tools.mk
+include ${APT_CACHER_NG_DOCKER_PATH}/apt_cacher_ng_docker.mk
 
-include ${ADORE_IF_CARLA_SUBMODULES_PATH}/cpplint_docker/cpplint_docker.mk
-
-
-include ${ADORE_IF_CARLA_SUBMODULES_PATH}/adore_v2x_sim/adore_v2x_sim.mk
-include ${ADORE_IF_CARLA_SUBMODULES_PATH}/coordinate_conversion/coordinate_conversion.mk
 include ${ADORE_IF_CARLA_SUBMODULES_PATH}/adore_if_ros_msg/adore_if_ros_msg.mk
+
 include ${ADORE_IF_CARLA_SUBMODULES_PATH}/cpplint_docker/cpplint_docker.mk
 include ${ADORE_IF_CARLA_SUBMODULES_PATH}/cppcheck_docker/cppcheck_docker.mk
 include ${ADORE_IF_CARLA_SUBMODULES_PATH}/lizard_docker/lizard_docker.mk

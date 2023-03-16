@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   carla:
-    image: carlasim/carla:0.9.13
+    image: ${CARLA_TAG} # see adore_if_carla.mk to assign this value 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     network_mode: host
