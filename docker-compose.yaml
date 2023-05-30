@@ -39,7 +39,10 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile.adore_if_carla
       network: host
-    image: adore_if_carla:latest
+      args:
+        - ADORE_IF_ROS_MSG_TAG=${ADORE_IF_ROS_MSG_TAG}
+        - PLOTLABLIB_TAG=${PLOTLABLIB_TAG}
+    image: ${ADORE_IF_CARLA_PROJECT}:${ADORE_IF_CARLA_TAG}
     command: /bin/bash -c "source /tmp/adore_if_carla/build/catkin_generated/installspace/setup.bash; roslaunch /tmp/adore_if_carla/launch/demo014_adore_if_carla_part.launch"
     #command: tail -F anything
     #stdin_open: true 

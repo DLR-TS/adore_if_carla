@@ -2,27 +2,29 @@ SHELL:=/bin/bash
 
 .DEFAULT_GOAL := all
 
-PROJECT="adore_if_carla"
-VERSION="latest"
-IMAGE_NAME="${PROJECT}:${VERSION}"
 ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
+
+
+MAKEFLAGS += --no-print-directory
 
 .EXPORT_ALL_VARIABLES:
 DOCKER_BUILDKIT?=1
 DOCKER_CONFIG?=
 
+SUBMODULES_PATH?=${ROOT_DIR}
 
-.PHONY: help
-help:
-	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+include adore_if_carla.mk
 
 .PHONY: all 
 all: build
 
-.PHONY: update_submodules
-update_submodules:
-	git submodule update --init --recursive	
+.PHONY: build
+build: clean root_check docker_group_check build ## Build build adore_if_carla
 
+.PHONY: set_env 
+set_env:
+	$(eval PROJECT := ${ADORE_IF_CARLA_PROJECT}) 
+	$(eval TAG := ${ADORE_IF_CARLA_TAG})
 
 .PHONY: run
 run:
@@ -33,18 +35,17 @@ install_nvidia_docker2:
 	bash install_nvidia_docker2.sh 
 
 .PHONY: build
-build:
+build: set_env build_adore_if_ros_msg build_plotlablib
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
-	cd "${ROOT_DIR}"/adore_if_ros_msg && make
-	cd "${ROOT_DIR}"/plotlablib && make
 	cd "${ROOT_DIR}" && docker compose build
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/build ${PROJECT}
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${IMAGE_NAME}):/tmp/${PROJECT}/launch ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/build ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/launch ${PROJECT}
 
-.PHONY: clean 
-clean: 
+.PHONY: clean
+clean: set_env ## Clean adore_if_carla build artifacts 
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
-	docker rm $$(docker ps -a -q --filter "ancestor=${IMAGE_NAME}") 2> /dev/null || true
-	docker rmi $$(docker images -q ${IMAGE_NAME}) 2> /dev/null || true
+	rm -rf "${ROOT_DIR}/${PROJECT}/build"
+	docker rm $$(docker ps -a -q --filter "ancestor=${PROJECT}:${TAG}") --force 2> /dev/null || true
+	docker rmi $$(docker images -q ${PROJECT}:${TAG}) --force 2> /dev/null || true
