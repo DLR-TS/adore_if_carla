@@ -7,7 +7,10 @@ MAKEFLAGS += --no-print-directory
 .EXPORT_ALL_VARIABLES:
 ADORE_IF_CARLA_PROJECT:=adore_if_carla
 
-CARLA_TAG:=carlasim/carla:0.9.13
+CARLA_REPO:=carlasim/carla
+CARLA_TAG:=0.9.13
+CARLA_IMAGE:=${CARLA_REPO}:${CARLA_TAG}
+CARLA_VERSION:=${CARLA_TAG}
 
 ADORE_IF_CARLA_MAKEFILE_PATH:=$(strip $(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")"))
 ifeq ($(SUBMODULES_PATH),)
@@ -44,6 +47,7 @@ include ${MAKE_GADGETS_PATH}/docker/docker-tools.mk
 include ${APT_CACHER_NG_DOCKER_PATH}/apt_cacher_ng_docker.mk
 
 include ${ADORE_IF_CARLA_SUBMODULES_PATH}/adore_if_ros_msg/adore_if_ros_msg.mk
+include ${ADORE_IF_CARLA_SUBMODULES_PATH}/plotlablib/plotlablib.mk
 
 include ${ADORE_IF_CARLA_SUBMODULES_PATH}/cpplint_docker/cpplint_docker.mk
 include ${ADORE_IF_CARLA_SUBMODULES_PATH}/cppcheck_docker/cppcheck_docker.mk

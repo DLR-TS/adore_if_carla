@@ -1,4 +1,8 @@
-FROM ${CARLA_TAG} as carla
+
+ARG CARLA_REPO
+ARG CARLA_TAG
+
+FROM ${CARLA_REPO}:${CARLA_TAG} as carla
 
 FROM ros:noetic-ros-base
 

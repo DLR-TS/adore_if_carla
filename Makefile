@@ -36,12 +36,16 @@ install_nvidia_docker2:
 build: set_env start_apt_cacher_ng _build get_cache_statistics ## Build adore_if_carla 
 
 .PHONY: _build
-_build:
+_build: build_adore_if_ros_msg build_plotlablib 
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
-	cd "${ROOT_DIR}"/adore_if_ros_msg && make
-	cd "${ROOT_DIR}"/plotlablib && make
-	cd "${ROOT_DIR}" && docker compose build
+	cd "${ROOT_DIR}" && \
+    docker compose build \
+                         --build-arg CARLA_REPO=${CARLA_REPO} \
+                         --build-arg CARLA_TAG=${CARLA_TAG} \
+                         --build-arg PLOTLABLIB_TAG=${PLOTLABLIB_TAG} \
+                         --build-arg ADORE_IF_ROS_MSG_TAG=${ADORE_IF_ROS_MSG_TAG}
+
 	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/build ${PROJECT}
 	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/launch ${PROJECT}
 
