@@ -17,13 +17,13 @@ ROS_BRIDGE_PATH=${ROOT_DIR}/external/ros-bridge
 
 include adore_if_carla.mk
 
-.PHONY: init_ros-bridge_submodule
-init_ros-bridge_submodule:
-ifeq ($(wildcard $(ROS_BRIDGE_PATH)/*),)
+ROS_BRIDGE_FILES := $(wildcard $(ROS_BRIDGE_PATH)/*)
+ifeq ($(ROS_BRIDGE_FILES),)
   $(shell git submodule update --init ${ROS_BRIDGE_PATH})
 else
-	@echo "ros-bridge submodule already initialized, skipping submodule init for sumo."
+ $(sell echo "ros-bridge submodule already initialized, skipping submodule init for sumo.")
 endif
+
 
 
 
