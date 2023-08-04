@@ -13,13 +13,25 @@ DOCKER_CONFIG?=
 
 SUBMODULES_PATH?=${ROOT_DIR}
 
+ROS_BRIDGE_PATH=${ROOT_DIR}/external/ros-bridge
+
 include adore_if_carla.mk
+
+.PHONY: init_ros-bridge_submodule
+init_ros-bridge_submodule:
+ifeq ($(wildcard $(ROS_BRIDGE_PATH)/*),)
+  $(shell git submodule update --init --recursive --remote --depth 1 --jobs 4 --single-branch ${ROS_BRIDGE_PATH})
+else
+	@echo "ros-bridge submodule already initialized, skipping submodule init for sumo."
+endif
+
+
 
 .PHONY: all 
 all: build
 
 .PHONY: build
-build: clean root_check docker_group_check build ## Build build adore_if_carla
+build: clean init_ros-bridge_submodule root_check docker_group_check build ## Build build adore_if_carla
 
 .PHONY: set_env 
 set_env:

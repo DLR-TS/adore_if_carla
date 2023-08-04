@@ -15,7 +15,7 @@ else
 endif
 MAKE_GADGETS_PATH:=${ADORE_IF_CARLA_SUBMODULES_PATH}/make_gadgets
 ifeq ($(wildcard $(MAKE_GADGETS_PATH)/*),)
-    $(info INFO: To clone submodules use: 'git submodules update --init --recursive')
+    $(info INFO: To clone submodules use: 'git submodule update --init --recursive')
     $(info INFO: To specify alternative path for submodules use: SUBMODULES_PATH="<path to submodules>" make build')
     $(info INFO: Default submodule path is: ${ADORE_IF_CARLA_MAKEFILE_PATH}')
     $(error "ERROR: ${MAKE_GADGETS_PATH} does not exist. Did you clone the submodules?")
