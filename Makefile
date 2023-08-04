@@ -17,11 +17,14 @@ SUBMODULES_PATH?=${ROOT_DIR}
 include adore_if_carla.mk
 
 ROS_BRIDGE_PATH:=${ROOT_DIR}/external/ros-bridge
-ROS_BRIDGE_FILES:=$(wildcard $(ROS_BRIDGE_PATH)/*)
-ifeq ($(ROS_BRIDGE_FILES),)
+CARLA_MSG_FILES:=$(wildcard $(ROS_BRIDGE_PATH)/carla_msgs/*)
+ifeq ($(CARLA_MSG_FILES),)
   $(shell git submodule update --init --recursive ${ROS_BRIDGE_PATH})
 endif
 
+ifeq ($(CARLA_MSG_FILES),)
+	$(error "ERROR: carla msgs files not found in: ${ROS_BRIDGE_PATH}/carla_msgs. call: git submodule update --init --recursive external/ros-bridge")
+endif
 
 
 
