@@ -39,8 +39,8 @@ build: set_env build_adore_if_ros_msg build_plotlablib
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
 	cd "${ROOT_DIR}" && docker compose build
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/build ${PROJECT}
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/launch ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/${PROJECT}/build ${PROJECT}
+	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/${PROJECT}/launch ${PROJECT}
 
 .PHONY: clean
 clean: set_env ## Clean adore_if_carla build artifacts 

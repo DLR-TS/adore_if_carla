@@ -28,19 +28,34 @@ include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #include(Packing)
 
-set(CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH};/tmp/${PROJECT_NAME}/build/install")
 list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../plotlablib/plotlablib/build/install")
+
+set(PROJECT_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/build/devel/include")
+
+
+set(CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH};/tmp/${PROJECT_NAME}/${PROJECT_NAME}/build/install")
+list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
+
+set(ADORE_IF_ROS_MSG_CMAKE_INSTALL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../adore_if_ros_msg/adore_if_ros_msg/build/install")
+list(APPEND CMAKE_PREFIX_PATH "${ADORE_IF_ROS_MSG_CMAKE_INSTALL_PATH}")
+
+set(PLOTLABLIB_CMAKE_INSTALL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../plotlablib/plotlablib/build/install")
+list(APPEND CMAKE_PREFIX_PATH "${PLOTLABLIB_CMAKE_INSTALL_PATH}")
+
+
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cppzmq/build/install/share/cmake/cppzmq")
 #/share/cmake/cppzmq/cppzmqConfig.cmake
 message(WARNING ${CMAKE_CURRENT_SOURCE_DIR})
 
 
+
+#set(carla_msgs_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 find_package(catkin REQUIRED COMPONENTS
-	adore_if_ros_msg
-	carla_msgs
-	roscpp
-  ackermann_msgs
+    adore_if_ros_msg
+    carla_msgs
+    roscpp
+    ackermann_msgs
 )
 
 find_package(plotlablib CONFIG REQUIRED)
