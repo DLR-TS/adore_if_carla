@@ -17,18 +17,20 @@ include adore_if_carla.mk
 include ${SUBMODULES_PATH}/ci_teststand/ci_teststand.mk
 
 
-#ROS_BRIDGE_PATH:=${ROOT_DIR}/external/ros-bridge
-#CARLA_MSG_FILES:=$(wildcard $(ROS_BRIDGE_PATH)/carla_msgs/*)
-#ifeq ($(CARLA_MSG_FILES),)
-#    $(shell git submodule update --init --recursive ${ROS_BRIDGE_PATH})
-#endif
+ROS_BRIDGE_PATH:=${ROOT_DIR}/external/ros-bridge
+CARL_MSG_FILES:=$(wildcard $(ROS_BRIDGE_PATH)/carla_msgs/*)
+.PHONY: init_submodules
+init_submodules:
+ifeq ($(CARLA_MSG_FILES),)
+	git submodule update --init --recursive ${ROS_BRIDGE_PATH}
+endif
 
 
 .PHONY: all 
 all: build
 
 .PHONY: build
-build: clean root_check docker_group_check build ## Build build adore_if_carla
+build: init_submodules clean root_check docker_group_check build ## Build build adore_if_carla
 
 .PHONY: set_env 
 set_env:
