@@ -20,7 +20,7 @@ include ${SUBMODULES_PATH}/ci_teststand/ci_teststand.mk
 ROS_BRIDGE_PATH:=${ROOT_DIR}/external/ros-bridge
 CARLA_MSG_FILES:=$(wildcard $(ROS_BRIDGE_PATH)/carla_msgs/*)
 ifeq ($(CARLA_MSG_FILES),)
-  $(shell git submodule update --init --recursive ${ROS_BRIDGE_PATH})
+  $(shell git submodule update --init --recursive ${ROS_BRIDGE_PATH} || true)
 endif
 
 ifeq ($(CARLA_MSG_FILES),)
