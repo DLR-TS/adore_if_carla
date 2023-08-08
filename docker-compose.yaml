@@ -19,7 +19,7 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile.ros-bridge
       network: host
-    image: carla_ros_bridge:adore
+    image: carla_ros_bridge:${ADORE_IF_CARLA_TAG}
     command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch"
     #command: tail -F anything
     #stdin_open: true 

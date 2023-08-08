@@ -13,8 +13,9 @@ DOCKER_CONFIG?=
 
 SUBMODULES_PATH?=${ROOT_DIR}
 
-
 include adore_if_carla.mk
+include ${SUBMODULES_PATH}/ci_teststand/ci_teststand.mk
+
 
 ROS_BRIDGE_PATH:=${ROOT_DIR}/external/ros-bridge
 CARLA_MSG_FILES:=$(wildcard $(ROS_BRIDGE_PATH)/carla_msgs/*)
@@ -62,3 +63,10 @@ clean: set_env ## Clean adore_if_carla build artifacts
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	docker rm $$(docker ps -a -q --filter "ancestor=${PROJECT}:${TAG}") --force 2> /dev/null || true
 	docker rmi $$(docker images -q ${PROJECT}:${TAG}) --force 2> /dev/null || true
+
+.PHONY: ci_build
+ci_build: build
+
+.PHONY: test
+test: ci_test
+
