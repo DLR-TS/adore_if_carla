@@ -3,6 +3,7 @@ version: "3.4"
 services:
   carla:
     image: carlasim/carla:0.9.13
+    container_name: carla
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     network_mode: host
@@ -20,6 +21,9 @@ services:
       dockerfile: ./docker/Dockerfile.ros-bridge
       network: host
     image: carla_ros_bridge:${ADORE_IF_CARLA_TAG}
+    container_name: carla_ros_bridge
+    depends_on:
+      - carla
     command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch"
     #command: tail -F anything
     #stdin_open: true 
@@ -43,6 +47,9 @@ services:
         - ADORE_IF_ROS_MSG_TAG=${ADORE_IF_ROS_MSG_TAG}
         - PLOTLABLIB_TAG=${PLOTLABLIB_TAG}
     image: ${ADORE_IF_CARLA_PROJECT}:${ADORE_IF_CARLA_TAG}
+    container_name: adore_if_carla 
+    depends_on:
+      - carla-ros-bridge
     command: /bin/bash -c "source /tmp/adore_if_carla/build/catkin_generated/installspace/setup.bash; roslaunch /tmp/adore_if_carla/launch/demo014_adore_if_carla_part.launch"
     #command: tail -F anything
     #stdin_open: true 
