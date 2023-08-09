@@ -17,6 +17,14 @@ jobs:
         with:
           submodules: 'recursive'
       - name: Save workspace
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 35000
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
         uses: actions/upload-artifact@v2
         with:
           name: workspace
@@ -31,6 +39,14 @@ jobs:
         with:
           name: workspace
       - name: Build
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 35000
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
         run: make ci_build && make save_docker_images
       - name: Save workspace
         uses: actions/upload-artifact@v2
@@ -46,5 +62,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: workspace
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 35000
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
       - name: Test
         run: make load_docker_images && make ci_test
