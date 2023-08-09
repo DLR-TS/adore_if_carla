@@ -36,7 +36,18 @@ make install_nvidia_docker2
 
 ## Getting Started
 1. Install nvida-docker2
-2. Build adore_if_carla with provided build target:
+2. Source the adore environment:
+```bash
+cd ../
+source adore.env
+```
+Alternatively, you can directly provide the `SUBMODULES_PATH` such as the 
+following: 
+```bash
+SUBMODULES_PATH="$(realpath ../)" make <target>
+```
+
+3. Build adore_if_carla with provided build target:
 ```bash
 make build
 ```
@@ -44,12 +55,12 @@ During build, the Dockerfile of the carlasimulator/ros-bridge is built and the
 carlasim/carla:0.9.13 docker image is pulled from dockerhub. Grab a coffee, 
 carla is >17GB.
 
-3. Start the adore_if_carla docker context with the provided target:
+4. Start the adore_if_carla docker context with the provided target:
 ```bash
 make up
 ```
 
-4. Run a scenario
+5. Run a scenario
 - There is a demo scenario provided: [adore_scenarios/demo014_adore_if_carla.launch](https://github.com/DLR-TS/adore_scenarios/blob/master/demo014_adore_if_carla.launch). This demo can be run with: 
 ```bash
 make run_demo_carla_scenario
