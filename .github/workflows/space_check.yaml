@@ -13,4 +13,4 @@ jobs:
           remove-android: 'true'
       - name: Docker
         run: |
-          df -h
+          docker run hello-world
