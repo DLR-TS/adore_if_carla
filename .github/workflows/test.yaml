@@ -28,6 +28,32 @@ jobs:
         run: make ci_build && make save_docker_images
       - name: Test
         run: make ci_test
- 
 
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make
+      - name: Code checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Build
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 35000
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+        run: |
+          make build
+      - name: Test
+        run: |
+          make ci_test
 
