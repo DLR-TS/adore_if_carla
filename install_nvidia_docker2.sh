@@ -5,7 +5,7 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 check_distro() {
     distribution=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
-    if [ "$distribution" != "PUbuntu" ]; then
+    if [ "$distribution" != "Ubuntu" ]; then
         echo "Error: This script is intended for Ubuntu distributions only." >&2
         exit 1
     fi
