@@ -50,7 +50,9 @@ services:
     container_name: adore_if_carla 
     depends_on:
       - carla-ros-bridge
-    command: /bin/bash -c "source /tmp/adore_if_carla/build/catkin_generated/installspace/setup.bash; roslaunch /tmp/adore_if_carla/launch/demo014_adore_if_carla_part.launch"
+    environment:
+      - DISPLAY=${DISPLAY}
+    command: /bin/bash -c "source /tmp/adore_if_carla/adore_if_carla/build/install/setup.bash; roslaunch --wait /tmp/adore_if_carla/adore_if_carla/launch/demo014_adore_if_carla_part.launch"
     #command: tail -F anything
     #stdin_open: true 
     #tty: true
