@@ -56,7 +56,7 @@ down: cleanup ## Stop carla, carla-ros-bridge and adore_if_carla docker images
 	docker compose rm -f
 
 .PHONY: run_demo_carla_scenario
-run_demo_carla_scenario: up ## run adore_scenarios/demo014_adore_if_carla.launch
+run_demo_carla_scenario: down up ## run adore_scenarios/demo014_adore_if_carla.launch
 	cd ../ && make run_test_scenarios TEST_SCENARIOS=adore_scenarios/demo014_adore_if_carla.launch
 	make down
 
