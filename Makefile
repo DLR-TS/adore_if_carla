@@ -54,10 +54,6 @@ run_demo_carla_scenario: up ## run adore_scenarios/demo014_adore_if_carla.launch
 	cd ../ && make run_test_scenarios TEST_SCENARIOS=adore_scenarios/demo014_adore_if_carla.launch
 	make down
 
-.PHONY: run
-run:
-	bash run_1_carla.sh 
-
 .PHONY: install_nvidia_docker2
 install_nvidia_docker2: ## Install nvidia-docker2 in Ubuntu
 	bash install_nvidia_docker2.sh 
