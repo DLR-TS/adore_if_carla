@@ -29,6 +29,12 @@ endif
 .PHONY: all 
 all: help
 
+.PHONY: cleanup 
+cleanup: 
+	docker compose rm --force || true
+	xhost + 1> /dev/null && xhost - 1> /dev/null || true
+	
+
 .PHONY: set_env 
 set_env:
 	$(eval PROJECT := ${ADORE_IF_CARLA_PROJECT}) 
@@ -38,15 +44,15 @@ set_env:
 build: init_submodules clean root_check docker_group_check _build ## Build build adore_if_carla
 
 .PHONY: up
-up: ## Start carla, carla-ros-bridge and adore_if_carla docker images
+up: cleanup ## Start carla, carla-ros-bridge and adore_if_carla docker images
 	xhost + 1> /dev/null && \
     docker compose up --force-recreate -d adore_if_carla; \
     xhost - 1> /dev/null; \
     docker compose rm --force
 
 .PHONY: down
-down: ## Stop carla, carla-ros-bridge and adore_if_carla docker images
-	docker compose down
+down: cleanup ## Stop carla, carla-ros-bridge and adore_if_carla docker images
+	docker compose down -t 0
 	docker compose rm -f
 
 .PHONY: run_demo_carla_scenario
