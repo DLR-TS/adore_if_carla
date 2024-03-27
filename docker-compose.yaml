@@ -1,20 +1,20 @@
 version: "3.4"
 
 services:
-  carla:
-    image: carlasim/carla:0.9.13
-    container_name: carla
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-    network_mode: host
-    command: /bin/bash ./CarlaUE4.sh -RenderOffScreen
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+#  carla:
+#    image: carlasim/carla:0.9.13
+#    container_name: carla
+#    volumes:
+#      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+#    network_mode: host
+#    command: /bin/bash ./CarlaUE4.sh -RenderOffScreen
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: all
+#              capabilities: [gpu]
   carla-ros-bridge:
     build:
       context: .
@@ -22,13 +22,55 @@ services:
       network: host
     image: carla_ros_bridge:${ADORE_IF_CARLA_TAG}
     container_name: carla_ros_bridge
-    depends_on:
-      - carla
-    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch"
-    #command: tail -F anything
+#    depends_on:
+#      - carla
+#b0
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='63.72671695367899,12.75529660936445,90,0,0,25'"
+#b1
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='63.77444132475648,12.62446253374219,90,0,0,25'"
+#b2
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='63.7621215027757,12.734293182380497,90,0,0,25'"
+#b3
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='55.549893145100214,8.874994086101651,90,0,0,25'"
+#b4
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='55.48158634186257,8.565997271798551,90,0,0,25'"
+
+#b10
+    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='27.595927096321248,-4.406455554999411,89,0,0,25'"
+
+#b12
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='27.22724350716453,-4.554767793044448,89,0,0,25'"
+#b19
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='24.599626821349375,-5.7478233110159636,89,0,0,25'"
+#b23
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='24.640196513966657,-6.109632987529039,89,0,0,25'"
+#b25
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='24.433501535095274,-5.6797975255176425,89,0,0,25'"
+
+#j0
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='2.270811337279156,-16.299854200333357,89,0,0,25'"
+#j1
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='-68.19660697702784,-49.302928654477,89,0,0,25'"
+#j2
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='-69.25542726623826,-50.50275945942849,89,0,0,25'"
+#j3
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='-56.164546893909574,-44.24840327817947,89,0,0,25'"
+#j4
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='-69.14602200884838,-50.65744734555483,89,0,0,25'"
+#j5
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='-12.223955873399973,-23.25209239963442,89,0,0,25'"
+#j6
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='-70.07280300627463,-50.69867768045515,89,0,0,25'"
+#j7
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='1.5014322608476505,-16.532318267039955,89,0,0,25'"
+#j8
+#    command: /bin/bash -c "source /opt/carla-ros-bridge/install/setup.bash; source /opt/carla/setup.bash; roslaunch /opt/carla-ros-bridge/launchfiles/carla_rosbridge_with_cybertruck_as_ego_vehicle.launch host:=192.168.99.1 spawn_point:='-1.2779495253926143,-17.442383158020675,89,0,0,25'"
+
+    
+#    command: tail -F anything
     #stdin_open: true 
     #tty: true
-    runtime: nvidia
+#    runtime: nvidia
     privileged: true
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -50,7 +92,7 @@ services:
     container_name: adore_if_carla 
     depends_on:
       - carla-ros-bridge
-    command: /bin/bash -c "source /tmp/adore_if_carla/build/catkin_generated/installspace/setup.bash; roslaunch /tmp/adore_if_carla/launch/demo014_adore_if_carla_part.launch"
+    command: /bin/bash -c "source /tmp/adore_if_carla/adore_if_carla/build/catkin_generated/installspace/setup.bash; roslaunch /tmp/adore_if_carla/adore_if_carla/launch/demo014_adore_if_carla_part.launch"
     #command: tail -F anything
     #stdin_open: true 
     #tty: true

@@ -20,6 +20,7 @@ COPY ros-bridge_files/local /opt/carla-ros-bridge/launchfiles
 
 RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash; \
     bash /opt/carla-ros-bridge/install_dependencies.sh; \
+    pip install --force-reinstall "simple-pid==1.0.1"; \
     sudo apt-get install --no-install-recommends -y librviz-dev; \
     echo "export PYTHONPATH=\$PYTHONPATH:/opt/carla/PythonAPI/carla/dist/$(ls /opt/carla/PythonAPI/carla/dist | grep py$ROS_PYTHON_VERSION.)" >> /opt/carla/setup.bash; \
     echo "export PYTHONPATH=\$PYTHONPATH:/opt/carla/PythonAPI/carla" >> /opt/carla/setup.bash'

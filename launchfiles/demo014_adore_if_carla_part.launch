@@ -25,9 +25,9 @@
 
   <group ns="/vehicle0">
         <param name="PARAMS/adore_if_carla/carla_namespace" value="ego_vehicle"/>
-        <node name="vehiclestate_carla2adore" pkg="adore_if_carla" type="vehiclestate2adore_node" args="adore_automation_enabled" output="screen"/>
+        <node name="vehiclestate_carla2adore" pkg="adore_if_carla" type="vehiclestate2adore_node" args="adore_automation_enabled" output="screen" no_cp_clearance_dummy="true"/>
         <node name="ackermanncommand_adore2carla" pkg="adore_if_carla" type="ackermanncommand2carla_node" output="screen"/>
-        <node name="objects_carla2adore" pkg="adore_if_carla" type="objects2adore_node" output="screen"/>
+        <!--<node name="objects_carla2adore" pkg="adore_if_carla" type="objects2adore_node" output="screen"/>-->
         <node name="plot_longitudinal_control_info" pkg="adore_if_carla" type="plot_longitudinal_control_info_node" output="screen"/>
     </group>
 

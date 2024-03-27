@@ -8,8 +8,8 @@
   <!-- Ego vehicle -->
   <arg name='role_name' default='ego_vehicle'/>
   <arg name="vehicle_filter" default='vehicle.*'/>
-  <arg name="spawn_point" default="-50,-137.2,1,0,0,0"/><!-- use comma separated format "x,y,z,roll,pitch,yaw" -->
-
+  <!--<arg name="spawn_point" default="-50,-137.2,1,0,0,0"/>--><!-- use comma separated format "x,y,z,roll,pitch,yaw -y and -yaw" -->
+  <arg name="spawn_point" default="3.2,-15.6,90,0,0,25"/>
   <!-- Map to load on startup (either a predefined CARLA town (e.g. 'Town01'), or a OpenDRIVE map file) -->
   <arg name="town" default=''/>
 
@@ -25,7 +25,8 @@
   <include file="$(find carla_ros_bridge)/launch/carla_ros_bridge.launch">
     <arg name='host' value='$(arg host)'/>
     <arg name='port' value='$(arg port)'/>
-    <arg name='town' value='$(arg town)'/>
+    <!--<arg name='town' value='$(arg town)'/>-->
+    <arg name='town' value='Carla/Maps/VV_ADAC_BS_Combined'/>
     <arg name='timeout' value='$(arg timeout)'/>
     <arg name='passive' value='$(arg passive)'/>
     <arg name='synchronous_mode' value='$(arg synchronous_mode)'/>

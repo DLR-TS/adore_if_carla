@@ -22,7 +22,7 @@
             "id": "map"
         },
         {
-            "type": "vehicle.tesla.cybertruck",
+            "type": "vehicle.volkswagen.passat",
             "id": "ego_vehicle",
             "sensors": 
             [
