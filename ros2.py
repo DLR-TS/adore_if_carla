@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2024 Computer Vision Center (CVC) at the Universitat Autonoma de
-# Barcelona (UAB).
-#
-# This work is licensed under the terms of the MIT license.
-# For a copy, see <https://opensource.org/licenses/MIT>.
-
-# Allows controlling a vehicle with a keyboard. For a simpler and more
-# documented example, please take a look at tutorial.py.
+# This file is copied and edited from https://github.com/carla-simulator/carla/blob/0.10.0/PythonAPI/examples/ros2/ros2_native.py
 
 import argparse
 import json
@@ -30,7 +23,6 @@ def _setup_vehicle(world, config):
     bp.set_attribute("ros_name", config.get("id")) 
     return  world.spawn_actor(
         bp,
-        #{"x": 119.7, "y": -53.1, "z": 0.0, "roll": 0.0, "pitch": 0.0, "yaw": 1.56},
         map_.get_spawn_points()[0],
         attach_to=None)
 
@@ -95,31 +87,18 @@ def main(args):
         sensors = _setup_sensors(world, vehicle, config.get("sensors", []))
 
         _ = world.tick()
-
-        vehicle.set_autopilot(False)
-        vehicle.apply_control(carla.VehicleControl())
         vehicle.set_autopilot(False)
 
         logging.info("Running...")
 
-        _ = world.tick()
-
-        _ = world.tick()
-        _ = world.tick()
-
-        vehicle.set_autopilot(False)
-
+  
         while True:
             _ = world.tick()
-            a=vehicle.get_location()
-            b=xodrmap.transform_to_geolocation(a)
-            print(a)
-            print(b)
-            if(a.y < 0.0 and b.latitude > 0.0):
-                pass
-                #print("ALERT")
-                #time.sleep(120)        
-            time.sleep(0.15)
+            # a=vehicle.get_location()
+            # b=xodrmap.transform_to_geolocation(a)
+            # print(a)
+            # print(b)
+            # time.sleep(0.15)
 
     except KeyboardInterrupt:
         print('\nCancelled by user. Bye!')
