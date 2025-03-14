@@ -1,4 +1,4 @@
-<!-- This file is take from https://github.com/carla-simulator/carla/blob/0.10.0/PythonAPI/examples/ros2/config/fastrtps-profile.xml -->
+<!-- This file is taken from https://github.com/carla-simulator/carla/blob/0.10.0/PythonAPI/examples/ros2/config/fastrtps-profile.xml -->
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
     <transport_descriptors>
