@@ -29,6 +29,7 @@ DEPENDENCIES := $(shell grep -oP '<depend>\K[^<]*' $(SCRIPT_DIRECTORY)/package.x
 
 .PHONY: copy_map
 copy_map: ## asdf
+	docker pull carlasim/carla:0.10.0 && \
 	docker cp $$(docker create --rm carlasim/carla:0.10.0):/home/carla/CarlaUnreal/Content/Carla/Maps/OpenDrive/Town10HD.xodr ./Town10HD.xodr
 
 .PHONY: build
