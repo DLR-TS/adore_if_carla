@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 # This file is copied and edited from https://github.com/carla-simulator/carla/blob/0.10.0/PythonAPI/examples/ros2/ros2_native.py
 
 import argparse

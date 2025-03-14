@@ -11,24 +11,32 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     network_mode: host
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket; s=socket.socket(); s.settimeout(2); s.connect(('localhost', 2000)); s.close()"]
+      interval: 5s
+      retries: 30
+      start_period: 30s
+      timeout: 5s
     environment:
       - FASTRTPS_DEFAULT_PROFILES_FILE=./fastrtps-profile.xml
       - DISPLAY=${DISPLAY}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-    command: /bin/bash ./CarlaUnreal.sh --ros2
+    #command: /bin/bash ./CarlaUnreal.sh --ros2
     runtime: nvidia
   carla_bridge:
     extends: carla_bridge_core
-    command: /bin/bash python ros2.py -f stack.json
+    command: /bin/bash -c "cd /tmp/carla_bridge; python ros2.py -f stack.json"
     depends_on:
-      - carla
+      carla:
+        condition: service_healthy
   carla_bridge_headless:
     extends: carla_bridge_core
-    command: /bin/bash python ros2.py -f stack.json
+    command: /bin/bash -c "cd /tmp/carla_bridge; python ros2.py -f stack.json"
     depends_on:
-      - carla_headless
+      carla_headless:
+        condition: service_healthy
   carla_bridge_core:
     build:
       context: .
