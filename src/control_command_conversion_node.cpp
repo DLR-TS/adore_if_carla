@@ -53,9 +53,9 @@ void
 ControlCommandConversionNode::callback_adore_control_command(const adore_ros2_msgs::msg::VehicleCommand& msg)
 {
   carla_msgs::msg::CarlaEgoVehicleControl output;
-  output.throttle = msg.acceleration > 0. ? std::min(1.,msg.acceleration/5):0.;
-  output.brake = msg.acceleration < 0. ? std::min(1.,-msg.acceleration/10):0.;
-  output.steer = -msg.steering_angle*7;
+  output.throttle = msg.acceleration > 0. ? std::min(1.,msg.acceleration/2):0.;
+  output.brake = msg.acceleration < 0. ? std::min(1.,-msg.acceleration/6):0.;
+  output.steer = -msg.steering_angle/0.7;
   output.hand_brake = false;
   output.reverse = false;
   output.manual_gear_shift = false;
