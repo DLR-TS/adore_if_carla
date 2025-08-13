@@ -44,11 +44,10 @@ set_env:
 build: init_submodules clean root_check docker_group_check _build ## Build build adore_if_carla
 
 .PHONY: up
-up: cleanup ## Start carla, carla-ros-bridge and adore_if_carla docker images
-	xhost + 1> /dev/null && \
+up: ## Start carla, carla-ros-bridge and adore_if_carla docker images
+	xhost local:root && \
     docker compose up --force-recreate -d adore_if_carla; \
-    xhost - 1> /dev/null; \
-    docker compose rm --force
+	docker compose rm --force
 
 .PHONY: down
 down: cleanup ## Stop carla, carla-ros-bridge and adore_if_carla docker images
