@@ -35,7 +35,7 @@ services:
       - ./:/tmp/adore_if_carla/
     network_mode: host
     environment:
-      - DISPLAY
+      - DISPLAY=${DISPLAY}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
   adore_if_carla:

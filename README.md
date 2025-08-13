@@ -22,17 +22,17 @@ via carla-ros-bridge.
 
 ## Prerequsits
 The following tools must be installed and configured for your system:
+- GNU make
+- Docker
 - nvida-docker2
 nvidia-docker2 must be installed on the host system. Instructions can be found 
 here: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
 
 Alternatively, you can run the provided setup target to install nvidia-docker2 
-on ubuntu:
+on Ubuntu:
 ```bash
 make install_nvidia_docker2
 ```
-- make
-- docker
 
 ## Getting Started
 1. Install nvida-docker2

@@ -29,6 +29,12 @@ endif
 .PHONY: all 
 all: help
 
+.PHONY: cleanup 
+cleanup: 
+	docker compose rm --force || true
+	xhost + 1> /dev/null && xhost - 1> /dev/null || true
+	
+
 .PHONY: set_env 
 set_env:
 	$(eval PROJECT := ${ADORE_IF_CARLA_PROJECT}) 
@@ -44,18 +50,14 @@ up: ## Start carla, carla-ros-bridge and adore_if_carla docker images
 	docker compose rm --force
 
 .PHONY: down
-down: ## Stop carla, carla-ros-bridge and adore_if_carla docker images
-	docker compose down
+down: cleanup ## Stop carla, carla-ros-bridge and adore_if_carla docker images
+	docker compose down -t 0
 	docker compose rm -f
 
 .PHONY: run_demo_carla_scenario
-run_demo_carla_scenario: up ## run adore_scenarios/demo014_adore_if_carla.launch
+run_demo_carla_scenario: down up ## run adore_scenarios/demo014_adore_if_carla.launch
 	cd ../ && make run_test_scenarios TEST_SCENARIOS=adore_scenarios/demo014_adore_if_carla.launch
 	make down
-
-.PHONY: run
-run:
-	bash run_1_carla.sh 
 
 .PHONY: install_nvidia_docker2
 install_nvidia_docker2: ## Install nvidia-docker2 in Ubuntu
