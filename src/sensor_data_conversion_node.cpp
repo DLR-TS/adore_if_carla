@@ -12,6 +12,7 @@
  *    Matthias Nichting
  ********************************************************************************/
 #include "sensor_data_conversion_node.hpp"
+#include <adore_dynamics_conversions.hpp>
 
 namespace adore
 {
@@ -38,9 +39,9 @@ SensorDataConversionNode::load_parameters()
   declare_parameter( "vehicle_id", 0 );
   get_parameter( "vehicle_id", current_traffic_participant.id );
 
-  current_traffic_participant.bounding_box.length = ego_vehicle_shape[0];
-  current_traffic_participant.bounding_box.width  = ego_vehicle_shape[1];
-  current_traffic_participant.bounding_box.height = ego_vehicle_shape[2];
+  current_traffic_participant.physical_parameters.body_length = ego_vehicle_shape[0];
+  current_traffic_participant.physical_parameters.body_width = ego_vehicle_shape[1];
+  current_traffic_participant.physical_parameters.body_height = ego_vehicle_shape[2];
 
   declare_parameter<std::vector<std::string>>( "other_vehicle_namespaces", std::vector<std::string>{} );
   get_parameter( "other_vehicle_namespaces", other_vehicle_namespaces );
@@ -142,7 +143,7 @@ void SensorDataConversionNode::timer_callback()
 void
 SensorDataConversionNode::publish_ego_transform()
 {
-  auto vehicle_frame = dynamics::conversions::vehicle_state_to_transform(current_vehicle_state, rclcpp::Time(static_cast<rcl_time_point_value_t>(current_vehicle_state.time * 1e9)));
+  auto vehicle_frame = dynamics::conversions::vehicle_state_to_transform(current_vehicle_state, rclcpp::Time(static_cast<rcl_time_point_value_t>(current_vehicle_state.time * 1e9)), "world");
   tf_transform_broadcaster->sendTransform(vehicle_frame);
 }
 
@@ -224,7 +225,7 @@ SensorDataConversionNode::publish_traffic_participants()
     if( distance > sensor_range )
       continue;
 
-    traffic_participants[other_vehicle.id] = other_vehicle;
+    traffic_participants.participants[other_vehicle.id] = other_vehicle;
   }
   publisher_traffic_participant_set->publish(dynamics::conversions::to_ros_msg(traffic_participants));
 }

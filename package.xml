@@ -13,6 +13,7 @@
   <test_depend>ament_lint_common</test_depend>
   <build_depend>adore_ros2_msgs</build_depend>
   <build_depend>adore_dynamics_conversions</build_depend>
+  <build_depend>adore_math_conversions</build_depend>
   <build_depend>adore_map_conversions</build_depend>
   <depend>GeographicLib</depend>
   <depend>geographic_msgs</depend>
