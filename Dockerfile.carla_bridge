@@ -1,0 +1,26 @@
+FROM carlasim/carla:0.10.0 AS carla
+
+FROM ubuntu:22.04
+
+ENV CARLA_VERSION=0.10.0
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    python3.10 \ 
+    python3.10-dev \
+    python3.10-venv \
+    python3-pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m venv /venv
+
+ENV PATH="/venv/bin:$PATH"
+
+COPY --from=carla /home/carla/PythonAPI /home/ubuntu/PythonAPI
+
+WORKDIR /home/ubuntu/PythonAPI
+
+RUN /venv/bin/pip install --no-cache-dir -r ./carla/requirements.txt
+RUN /venv/bin/pip install --no-cache-dir ./carla/dist/*.whl
+
+CMD ["/bin/bash"]

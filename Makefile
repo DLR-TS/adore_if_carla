@@ -1,87 +1,75 @@
 SHELL:=/bin/bash
 
-.DEFAULT_GOAL := all
 
-ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
-
-
-MAKEFLAGS += --no-print-directory
-
-.EXPORT_ALL_VARIABLES:
-DOCKER_BUILDKIT?=1
-DOCKER_CONFIG?=
-
-SUBMODULES_PATH?=${ROOT_DIR}
-
-include adore_if_carla.mk
-include ${SUBMODULES_PATH}/ci_teststand/ci_teststand.mk
+.PHONY: help
+help:
+	@printf "Usage: make \033[36m<target>\033[0m\n%s\n" "$$(awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) }' $(MAKEFILE_LIST) | sort | uniq)"
 
 
-ROS_BRIDGE_PATH:=${ROOT_DIR}/external/ros-bridge
-CARL_MSG_FILES:=$(wildcard $(ROS_BRIDGE_PATH)/carla_msgs/*)
-.PHONY: init_submodules
-init_submodules:
-ifeq ($(CARLA_MSG_FILES),)
-	git submodule update --init --recursive ${ROS_BRIDGE_PATH}
-endif
 
+SCRIPT_DIRECTORY := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+ROS2_WORKSPACE := $(shell \
+    current_dir=$(SCRIPT_DIRECTORY); \
+    while [ "$$current_dir" != "/" ]; do \
+        if [ -d "$$current_dir/build" ] && \
+           [ -d "$$current_dir/install" ] && \
+           [ -d "$$current_dir/log" ] && \
+           [ -d "$$current_dir/src" ]; then \
+            echo "$$current_dir"; \
+            exit 0; \
+        fi; \
+        current_dir=$$(dirname "$$current_dir"); \
+    done; \
+    echo "Error: ROS 2 workspace not found." >&2; \
+    exit 1; \
+)
 
-.PHONY: all 
-all: help
+ROS2_PACKAGE := $(shell grep -oP '<name>\K[^<]*' $(SCRIPT_DIRECTORY)/package.xml | tr -d '[:space:]')
+DEPENDENCIES := $(shell grep -oP '<depend>\K[^<]*' $(SCRIPT_DIRECTORY)/package.xml | tr '\n' ' ' | tr -s ' ' | sed 's/ $$//')
 
-.PHONY: cleanup 
-cleanup: 
-	docker compose rm --force || true
-	xhost + 1> /dev/null && xhost - 1> /dev/null || true
-	
-
-.PHONY: set_env 
-set_env:
-	$(eval PROJECT := ${ADORE_IF_CARLA_PROJECT}) 
-	$(eval TAG := ${ADORE_IF_CARLA_TAG})
+.PHONY: copy_map
+copy_map: ## asdf
+	docker pull carlasim/carla:0.10.0 && \
+	docker cp $$(docker create --rm carlasim/carla:0.10.0):/home/carla/CarlaUnreal/Content/Carla/Maps/OpenDrive/Town10HD.xodr ./Town10HD.xodr
 
 .PHONY: build
-build: init_submodules clean root_check docker_group_check _build ## Build build adore_if_carla
+build: build_dependencies ##         Build ROS2 Node. Same as running `colcon build --packages-select <package name>`
+	@echo "Building: ${ROS2_PACKAGE}"
+	@echo "  Using ROS 2 workspace: ${ROS2_WORKSPACE}"
+	cd $(ROS2_WORKSPACE) && colcon build --packages-select ${ROS2_PACKAGE}
 
-.PHONY: up
-up: ## Start carla, carla-ros-bridge and adore_if_carla docker images
-	xhost local:root && \
-    docker compose up --force-recreate -d adore_if_carla; \
-	docker compose rm --force
-
-.PHONY: down
-down: cleanup ## Stop carla, carla-ros-bridge and adore_if_carla docker images
-	docker compose down -t 0
-	docker compose rm -f
-
-.PHONY: run_demo_carla_scenario
-run_demo_carla_scenario: down up ## run adore_scenarios/demo014_adore_if_carla.launch
-	cd ../ && make run_test_scenarios TEST_SCENARIOS=adore_scenarios/demo014_adore_if_carla.launch
-	make down
-
-.PHONY: install_nvidia_docker2
-install_nvidia_docker2: ## Install nvidia-docker2 in Ubuntu
-	bash install_nvidia_docker2.sh 
-
-.PHONY: _build
-_build: set_env build_adore_if_ros_msg build_plotlablib
-	rm -rf "${ROOT_DIR}/${PROJECT}/build"
-	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
-	cd "${ROOT_DIR}" && docker compose build
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/${PROJECT}/build ${PROJECT}
-	cd "${ROOT_DIR}" && docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/${PROJECT}/launch ${PROJECT}
-
-.PHONY: clean
-clean: set_env ## Clean adore_if_carla build artifacts 
-	rm -rf "${ROOT_DIR}/${PROJECT}/build"
-	rm -rf "${ROOT_DIR}/${PROJECT}/launch"
-	rm -rf "${ROOT_DIR}/${PROJECT}/build"
-	docker rm $$(docker ps -a -q --filter "ancestor=${PROJECT}:${TAG}") --force 2> /dev/null || true
-	docker rmi $$(docker images -q ${PROJECT}:${TAG}) --force 2> /dev/null || true
-
-.PHONY: ci_build
-ci_build: build
+.PHONY: build_dependencies
+build_dependencies: ## Build all node dependencies
+	@echo "Building dependencies..."
+	@echo "  Using ROS 2 workspace: ${ROS2_WORKSPACE}"
+	@cd $(ROS2_WORKSPACE) && for dependency in $(DEPENDENCIES); do \
+	    cd $(ROS2_WORKSPACE) && colcon build --packages-select $$dependency; \
+	done
 
 .PHONY: test
-test: ci_test
+test: build ##         Execute unit tests
+	@echo "Running tests..."
+	@source $(ROS2_WORKSPACE)/install/setup.bash && \
+    if [ -z "$$(ros2 pkg list | grep $(ROS2_PACKAGE))" ]; then \
+        echo "ERROR: ROS2 Package: '$(ROS2_PACKAGE)' not found. Did you build it?" >&2; \
+        exit 1; \
+    fi && \
+    cd $(ROS2_WORKSPACE) && colcon test --packages-select ${ROS2_PACKAGE} --event-handlers console_direct+
+	colcon test-result --verbose
+
+
+.PHONY: run
+run: ##         Run the node
+	@echo "Running ROS 2 node: ${ROS2_PACKAGE}..."
+	@echo "  Using ROS 2 workspace: ${ROS2_WORKSPACE}"
+	@source $(ROS2_WORKSPACE)/install/setup.bash && \
+    if [ -z "$$(ros2 pkg list | grep $(ROS2_PACKAGE))" ]; then \
+        echo "ERROR: ROS2 Package: '$(ROS2_PACKAGE)' not found. Did you build it?" >&2; \
+        exit 1; \
+    fi && \
+    cd $(ROS2_WORKSPACE) && ros2 run $(ROS2_PACKAGE) $(ROS2_PACKAGE)
+
+.PHONY: clean
+clean: ##         Clean build artifacts
+	rm -rf $(ROS2_WORKSPACE)/build/$(ROS2_PACKAGE) $(ROS2_WORKSPACE)/install/$(ROS2_PACKAGE)
 
