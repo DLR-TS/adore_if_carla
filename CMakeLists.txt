@@ -28,8 +28,6 @@ target_compile_features(sensor_data_conversion_node PUBLIC c_std_99 cxx_std_17) 
 add_all_target_include_directories(sensor_data_conversion_node)
 add_all_target_link_libraries(sensor_data_conversion_node)
 
-
-
 install(TARGETS 
   control_command_conversion_node
   sensor_data_conversion_node
