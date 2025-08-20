@@ -44,8 +44,6 @@ services:
       network: host
     image: adore_carla_rosbridge:latest
     container_name: carla_ros_bridge
-    depends_on:
-      - carla
     runtime: nvidia
     privileged: true
     volumes:
