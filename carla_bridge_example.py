@@ -16,6 +16,8 @@ from launch_ros.actions import Node
 import os
 
 def generate_launch_description():
+    launch_file_dir = os.path.dirname(os.path.realpath(__file__))
+    model_file = os.path.abspath(os.path.join(launch_file_dir, "../../../../adore_scenarios/assets/vehicle_params/")) + "/NGC.json"
     return LaunchDescription([
         Node(
             package='foxglove_bridge',
@@ -50,7 +52,8 @@ def generate_launch_description():
                                            "min_distance_to_vehicle_ahead",
                                            "look_ahead_for_curvature",
                                            "look_behind_for_curvature"]},
-               {"planner_settings_values": [ 2.7,
+                {"vehicle_model_file": model_file},
+                {"planner_settings_values": [ 2.7,
                                                0.2,
                                                0.02,
                                                5.0,
@@ -66,7 +69,7 @@ def generate_launch_description():
             name='mission_control',
             parameters=[
                 {"debug_mode_active": True},
-                {"R2S map file": os.path.abspath("./Town10HD.xodr")},
+                {"map file": os.path.abspath("./Town10HD.xodr")},
                 {"goal_position_x" : -110.36},
                 {"goal_position_y": -8.48}
             ]
@@ -107,7 +110,7 @@ def generate_launch_description():
                                            "kp_omega",
                                            "dt",
                                            "steering_comfort"]},
-
+               {"vehicle_model_file": model_file},
                {"controller_settings_values": [ 0.3,
                                                0.02,
                                                0.3,
