@@ -94,7 +94,7 @@ def generate_launch_description():
        Node(
            package='trajectory_tracker',
            namespace='ego_vehicle',
-           executable='trajectory_tracker_node',
+           executable='trajectory_tracker',
            name='trajectory_tracker',
            parameters=[
                {"set_controller": 1}, # 0 for MPC, 1 for PID
