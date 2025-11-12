@@ -31,12 +31,12 @@ namespace adore
 {
 namespace carla_bridge
 {
+
 class ControlCommandConversionNode : public rclcpp::Node
 {
 public:
 
   ControlCommandConversionNode();
-
 
 private:
 
@@ -44,21 +44,21 @@ private:
   void create_publishers();
   void timer_callback();
 
-
-  /******************************* PUBLISHERS ************************************************************/
+  // Publishers
   rclcpp::Publisher<carla_msgs::msg::CarlaEgoVehicleControl>::SharedPtr publisher_carla_control_command;
 
-  /******************************* SUBSCRIBERS ************************************************************/
+  // Subscribers
   rclcpp::Subscription<adore_ros2_msgs::msg::VehicleCommand>::SharedPtr      subscriber_adore_control_command;
   rclcpp::Subscription<adore_ros2_msgs::msg::VehicleStateDynamic>::SharedPtr subscriber_vehicle_state;
 
-  /******************************* OTHER MEMBERS ************************************************************/
+  // Other members
+  void callback_adore_control_command( const adore_ros2_msgs::msg::VehicleCommand& msg );
+  void vehicle_state_callback( const adore_ros2_msgs::msg::VehicleStateDynamic& msg );
 
-  void                                 callback_adore_control_command( const adore_ros2_msgs::msg::VehicleCommand& msg );
-  void                                 vehicle_state_callback( const adore_ros2_msgs::msg::VehicleStateDynamic& msg );
   rclcpp::TimerBase::SharedPtr         main_timer;
   int                                  time_step_ms = 50;
   adore::dynamics::VehicleStateDynamic current_vehicle_state;
 };
+
 } // namespace carla_bridge
 } // namespace adore

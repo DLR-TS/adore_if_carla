@@ -25,7 +25,7 @@ target_include_directories(sensor_data_conversion_node PUBLIC
 target_compile_features(sensor_data_conversion_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 
-install(TARGETS 
+install(TARGETS
   control_command_conversion_node
   sensor_data_conversion_node
   DESTINATION lib/${PROJECT_NAME})
@@ -58,9 +58,12 @@ if(BUILD_TESTING)
   # comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
+
+
+  # Skip uncrustify (C/C++ formatter)
+  set(ament_cmake_uncrustify_FOUND TRUE)
+
   ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_package()
-
-

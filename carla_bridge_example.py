@@ -10,10 +10,11 @@
 #
 # SPDX-License-Identifier: EPL-2.0
 # ********************************************************************************
+import os
 
 from launch import LaunchDescription
 from launch_ros.actions import Node
-import os
+
 
 def generate_launch_description():
     return LaunchDescription([
@@ -32,7 +33,7 @@ def generate_launch_description():
             executable='visualizer',
             name='visualizer',
             parameters=[
-                {"asset folder": os.path.abspath("../assets/maps/")}
+                {'asset folder': os.path.abspath('../assets/maps/')}
             ]
         ),
         Node(
@@ -41,22 +42,23 @@ def generate_launch_description():
             executable='decision_maker',
             name='decision_maker',
             parameters=[
-                {"debug_mode_active": False},
-                {"optinlc_route_following": True}, # 0 for Lane following, 1 for OptiNLC route following
-                {"planner_settings_keys": [ "wheel_base",
-                                           "lateral_weight",
-                                           "heading_weight",
-                                           "maximum_velocity",
-                                           "min_distance_to_vehicle_ahead",
-                                           "look_ahead_for_curvature",
-                                           "look_behind_for_curvature"]},
-               {"planner_settings_values": [ 2.7,
-                                               0.2,
-                                               0.02,
-                                               5.0,
-                                               10.0,
-                                               40.0,
-                                               20.0]}
+                {'debug_mode_active': False},
+                # 0 for Lane following, 1 for OptiNLC route following
+                {'optinlc_route_following': True},
+                {'planner_settings_keys': ['wheel_base',
+                                           'lateral_weight',
+                                           'heading_weight',
+                                           'maximum_velocity',
+                                           'min_distance_to_vehicle_ahead',
+                                           'look_ahead_for_curvature',
+                                           'look_behind_for_curvature']},
+                {'planner_settings_values': [2.7,
+                                             0.2,
+                                             0.02,
+                                             5.0,
+                                             10.0,
+                                             40.0,
+                                             20.0]}
             ],
         ),
         Node(
@@ -65,10 +67,10 @@ def generate_launch_description():
             executable='mission_control',
             name='mission_control',
             parameters=[
-                {"debug_mode_active": True},
-                {"R2S map file": os.path.abspath("./Town10HD.xodr")},
-                {"goal_position_x" : -110.36},
-                {"goal_position_y": -8.48}
+                {'debug_mode_active': True},
+                {'R2S map file': os.path.abspath('./Town10HD.xodr')},
+                {'goal_position_x': -110.36},
+                {'goal_position_y': -8.48}
             ]
         ),
         Node(
@@ -78,7 +80,7 @@ def generate_launch_description():
             name='sensor_data_conversion_node',
             output='screen',
             parameters=[
-                {"debug_mode_active": True},
+                {'debug_mode_active': True},
             ]
         ),
         Node(
@@ -88,37 +90,37 @@ def generate_launch_description():
             name='control_command_conversion_node',
             output='screen',
             parameters=[
-                {"debug_mode_active": True},
+                {'debug_mode_active': True},
             ]
         ),
-       Node(
-           package='trajectory_tracker',
-           namespace='ego_vehicle',
-           executable='trajectory_tracker',
-           name='trajectory_tracker',
-           parameters=[
-               {"set_controller": 1}, # 0 for MPC, 1 for PID
-               {"controller_settings_keys": [ "kp_x",
-                                           "ki_x",
-                                           "velocity_weight",
-                                           "kp_y",
-                                           "ki_y",
-                                           "heading_weight",
-                                           "kp_omega",
-                                           "dt",
-                                           "steering_comfort"]},
+        Node(
+            package='trajectory_tracker',
+            namespace='ego_vehicle',
+            executable='trajectory_tracker',
+            name='trajectory_tracker',
+            parameters=[
+                {'set_controller': 1},  # 0 for MPC, 1 for PID
+                {'controller_settings_keys': ['kp_x',
+                                              'ki_x',
+                                              'velocity_weight',
+                                              'kp_y',
+                                              'ki_y',
+                                              'heading_weight',
+                                              'kp_omega',
+                                              'dt',
+                                              'steering_comfort']},
 
-               {"controller_settings_values": [ 0.3,
-                                               0.02,
-                                               0.3,
-                                               0.25,
-                                               0.0,
-                                               0.3,
-                                               0.1,
-                                               0.05,
-                                               2.5]}
-           ],
-           output={'both': 'log'},
-       ),
+                {'controller_settings_values': [0.3,
+                                                0.02,
+                                                0.3,
+                                                0.25,
+                                                0.0,
+                                                0.3,
+                                                0.1,
+                                                0.05,
+                                                2.5]}
+            ],
+            output={'both': 'log'},
+        ),
     ]
-)
+    )
