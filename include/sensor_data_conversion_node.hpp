@@ -13,30 +13,31 @@
 
 #pragma once
 
-#include <chrono>
-#include <map>
-#include <string>
-#include <vector>
-#include <stdexcept>
-#include <iostream>
 #include <cmath>
 
+#include <chrono>
+#include <iostream>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 #include "adore_dynamics_conversions.hpp"
-#include "adore_ros2_msgs/msg/state_monitor.hpp"
-#include "adore_ros2_msgs/msg/traffic_participant_set.hpp"
-#include "adore_ros2_msgs/msg/traffic_participant.hpp"
-#include "dynamics/vehicle_state.hpp"
-#include "sensor_msgs/msg/nav_sat_fix.hpp"
-#include "sensor_msgs/msg/imu.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "tf2_ros/transform_broadcaster.h"
 #include "adore_math/angles.h"
 #include "adore_math/distance.h"
-#include "GeographicLib/TransverseMercatorExact.hpp"
-#include "GeographicLib/Constants.hpp"
-#include "tf2_ros/transform_listener.h"
-#include "tf2_ros/buffer.h"
+#include "adore_ros2_msgs/msg/state_monitor.hpp"
+#include "adore_ros2_msgs/msg/traffic_participant.hpp"
+#include "adore_ros2_msgs/msg/traffic_participant_set.hpp"
 
+#include "GeographicLib/Constants.hpp"
+#include "GeographicLib/TransverseMercatorExact.hpp"
+#include "dynamics/vehicle_state.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/imu.hpp"
+#include "sensor_msgs/msg/nav_sat_fix.hpp"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/transform_listener.h"
 
 namespace adore
 {
@@ -71,38 +72,36 @@ private:
 
   /******************************* SUBSCRIBERS ************************************************************/
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr subscriber_sensor_data_gnss;
-  rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr            subscriber_sensor_data_imu;
+  rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr       subscriber_sensor_data_imu;
 
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::unique_ptr<tf2_ros::Buffer>            tf_buffer_;
   using StateSubscriber = rclcpp::Subscription<adore_ros2_msgs::msg::TrafficParticipant>::SharedPtr;
   std::vector<StateSubscriber> other_vehicle_traffic_participant_subscribers;
 
   /******************************* OTHER MEMBERS ************************************************************/
-  void other_vehicle_traffic_participant_callback(const adore_ros2_msgs::msg::TrafficParticipant& msg,
-                                                   const std::string&                              vehicle_namespace);
-  void sensor_callback_imu(const sensor_msgs::msg::Imu& msg);
-  void sensor_callback_gnss(const sensor_msgs::msg::NavSatFix& msg);
+  void other_vehicle_traffic_participant_callback( const adore_ros2_msgs::msg::TrafficParticipant& msg,
+                                                   const std::string&                              vehicle_namespace );
+  void sensor_callback_imu( const sensor_msgs::msg::Imu& msg );
+  void sensor_callback_gnss( const sensor_msgs::msg::NavSatFix& msg );
 
   rclcpp::TimerBase::SharedPtr main_timer;
 
 
- 
   adore::dynamics::VehicleStateDynamic                          current_vehicle_state;
   adore::dynamics::TrafficParticipant                           current_traffic_participant;
   std::unordered_map<std::string, dynamics::TrafficParticipant> other_vehicles;
   std::vector<std::string>                                      other_vehicle_namespaces;
 
-  int time_step_ms           = 50;
-  double last_call_sensor_callback_imu = 0.0;
-  double last_call_sensor_callback_gnss = 0.0;
-  double initialization_time = 0.0;
-  std::string sensor_parent_name = "hero";
-  std::string sensor_role_name_gnss = "gnss";
-  std::string sensor_role_name_imu = "imu";
-  std::vector<double> ego_vehicle_shape            = { 0.0, 0.0, 0.0 };
-  double sensor_range            = 100;
-
+  int                 time_step_ms                   = 50;
+  double              last_call_sensor_callback_imu  = 0.0;
+  double              last_call_sensor_callback_gnss = 0.0;
+  double              initialization_time            = 0.0;
+  std::string         sensor_parent_name             = "hero";
+  std::string         sensor_role_name_gnss          = "gnss";
+  std::string         sensor_role_name_imu           = "imu";
+  std::vector<double> ego_vehicle_shape              = { 0.0, 0.0, 0.0 };
+  double              sensor_range                   = 100;
 };
 } // namespace carla_bridge
 } // namespace adore

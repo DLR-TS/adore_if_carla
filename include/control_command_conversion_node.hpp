@@ -18,15 +18,14 @@
 #include <string>
 #include <vector>
 
-#include "adore_ros2_msgs/msg/vehicle_command.hpp"
 #include "adore_dynamics_conversions.hpp"
+#include "adore_ros2_msgs/msg/vehicle_command.hpp"
+
 #include "dynamics/vehicle_state.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2/LinearMath/Matrix3x3.h>
 #include <carla_msgs/msg/carla_ego_vehicle_control.hpp>
-
-
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2/LinearMath/Quaternion.h>
 
 namespace adore
 {
@@ -45,24 +44,21 @@ private:
   void create_publishers();
   void timer_callback();
 
-  
 
   /******************************* PUBLISHERS ************************************************************/
-  rclcpp::Publisher<carla_msgs::msg::CarlaEgoVehicleControl>::SharedPtr     publisher_carla_control_command;
+  rclcpp::Publisher<carla_msgs::msg::CarlaEgoVehicleControl>::SharedPtr publisher_carla_control_command;
 
   /******************************* SUBSCRIBERS ************************************************************/
-  rclcpp::Subscription<adore_ros2_msgs::msg::VehicleCommand>::SharedPtr     subscriber_adore_control_command;
-  rclcpp::Subscription<adore_ros2_msgs::msg::VehicleStateDynamic>::SharedPtr   subscriber_vehicle_state;
+  rclcpp::Subscription<adore_ros2_msgs::msg::VehicleCommand>::SharedPtr      subscriber_adore_control_command;
+  rclcpp::Subscription<adore_ros2_msgs::msg::VehicleStateDynamic>::SharedPtr subscriber_vehicle_state;
 
   /******************************* OTHER MEMBERS ************************************************************/
- 
-  void callback_adore_control_command(const adore_ros2_msgs::msg::VehicleCommand& msg);
-  void vehicle_state_callback( const adore_ros2_msgs::msg::VehicleStateDynamic& msg );
-  rclcpp::TimerBase::SharedPtr main_timer;
-  int time_step_ms           = 50;
-  adore::dynamics::VehicleStateDynamic                          current_vehicle_state;
 
-
+  void                                 callback_adore_control_command( const adore_ros2_msgs::msg::VehicleCommand& msg );
+  void                                 vehicle_state_callback( const adore_ros2_msgs::msg::VehicleStateDynamic& msg );
+  rclcpp::TimerBase::SharedPtr         main_timer;
+  int                                  time_step_ms = 50;
+  adore::dynamics::VehicleStateDynamic current_vehicle_state;
 };
 } // namespace carla_bridge
 } // namespace adore
