@@ -7,7 +7,6 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
-include($ENV{SOURCE_DIRECTORY}/libraries/adore_libraries.cmake)
 include(requirements.cmake)
 
 
@@ -16,8 +15,7 @@ target_include_directories(control_command_conversion_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(control_command_conversion_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-add_all_target_include_directories(control_command_conversion_node)
-add_all_target_link_libraries(control_command_conversion_node)
+
 
 
 add_executable(sensor_data_conversion_node src/sensor_data_conversion_node.cpp)
@@ -25,13 +23,31 @@ target_include_directories(sensor_data_conversion_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(sensor_data_conversion_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-add_all_target_include_directories(sensor_data_conversion_node)
-add_all_target_link_libraries(sensor_data_conversion_node)
 
-install(TARGETS 
+
+install(TARGETS
   control_command_conversion_node
   sensor_data_conversion_node
   DESTINATION lib/${PROJECT_NAME})
+
+
+ament_target_dependencies(control_command_conversion_node
+  adore_math_conversions
+  adore_map_conversions
+  adore_dynamics_conversions
+  sensor_msgs
+  carla_msgs
+  GeographicLib
+)
+
+ament_target_dependencies(sensor_data_conversion_node
+  adore_math_conversions
+  adore_map_conversions
+  adore_dynamics_conversions
+  sensor_msgs
+  carla_msgs
+  GeographicLib
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -42,9 +58,12 @@ if(BUILD_TESTING)
   # comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
+
+
+  # Skip uncrustify (C/C++ formatter)
+  set(ament_cmake_uncrustify_FOUND TRUE)
+
   ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_package()
-
-

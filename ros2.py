@@ -11,34 +11,34 @@
 # SPDX-License-Identifier: EPL-2.0
 # ********************************************************************************
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 
-
-# This file is copied and edited from https://github.com/carla-simulator/carla/blob/0.10.0/PythonAPI/examples/ros2/ros2_native.py
+# This file is copied and edited from
+# https://github.com/carla-simulator/carla/blob/0.10.0
+# /PythonAPI/examples/ros2/ros2_native.py
 
 import argparse
 import json
 import logging
 
-import time
-
 import carla
 
 
 def _setup_vehicle(world, config):
-    logging.debug("Spawning vehicle: {}".format(config.get("type")))
+    logging.debug('Spawning vehicle: %s', config.get('type'))
 
     bp_library = world.get_blueprint_library()
     map_ = world.get_map()
 
-    bp = bp_library.filter(config.get("type"))[0]
-    
-    bp.set_attribute("role_name", config.get("id"))
-    bp.set_attribute("ros_name", config.get("id")) 
-    return  world.spawn_actor(
+    bp = bp_library.filter(config.get('type'))[0]
+
+    bp.set_attribute('role_name', config.get('id'))
+    bp.set_attribute('ros_name', config.get('id'))
+    return world.spawn_actor(
         bp,
         map_.get_spawn_points()[0],
-        attach_to=None)
+        attach_to=None,
+    )
 
 
 def _setup_sensors(world, vehicle, sensors_config):
@@ -46,24 +46,33 @@ def _setup_sensors(world, vehicle, sensors_config):
 
     sensors = []
     for sensor in sensors_config:
-        logging.debug("Spawning sensor: {}".format(sensor))
+        logging.debug('Spawning sensor: %s', sensor)
 
-        bp = bp_library.filter(sensor.get("type"))[0]
-        bp.set_attribute("ros_name", sensor.get("id")) 
-        bp.set_attribute("role_name", sensor.get("id")) 
-        for key, value in sensor.get("attributes", {}).items():
+        bp = bp_library.filter(sensor.get('type'))[0]
+        bp.set_attribute('ros_name', sensor.get('id'))
+        bp.set_attribute('role_name', sensor.get('id'))
+        for key, value in sensor.get('attributes', {}).items():
             bp.set_attribute(str(key), str(value))
 
+        spawn_point = sensor['spawn_point']
         wp = carla.Transform(
-            location=carla.Location(x=sensor["spawn_point"]["x"], y=-sensor["spawn_point"]["y"], z=sensor["spawn_point"]["z"]),
-            rotation=carla.Rotation(roll=sensor["spawn_point"]["roll"], pitch=-sensor["spawn_point"]["pitch"], yaw=-sensor["spawn_point"]["yaw"])
+            location=carla.Location(
+                x=spawn_point['x'],
+                y=-spawn_point['y'],
+                z=spawn_point['z'],
+            ),
+            rotation=carla.Rotation(
+                roll=spawn_point['roll'],
+                pitch=-spawn_point['pitch'],
+                yaw=-spawn_point['yaw'],
+            ),
         )
 
         sensors.append(
             world.spawn_actor(
                 bp,
                 wp,
-                attach_to=vehicle
+                attach_to=vehicle,
             )
         )
 
@@ -73,7 +82,6 @@ def _setup_sensors(world, vehicle, sensors_config):
 
 
 def main(args):
-
     world = None
     vehicle = None
     sensors = []
@@ -84,7 +92,6 @@ def main(args):
         client.set_timeout(60.0)
 
         world = client.get_world()
-        xodrmap = world.get_map() 
         original_settings = world.get_settings()
         settings = world.get_settings()
         settings.synchronous_mode = True
@@ -94,22 +101,21 @@ def main(args):
         traffic_manager = client.get_trafficmanager()
         traffic_manager.set_synchronous_mode(True)
 
-        with open(args.file) as f:
+        with open(args.file, encoding='utf-8') as f:
             config = json.load(f)
 
         vehicle = _setup_vehicle(world, config)
-        sensors = _setup_sensors(world, vehicle, config.get("sensors", []))
+        sensors = _setup_sensors(world, vehicle, config.get('sensors', []))
 
         _ = world.tick()
         vehicle.set_autopilot(False)
 
-        logging.info("Running...")
+        logging.info('Running...')
 
-  
         while True:
             _ = world.tick()
-            # a=vehicle.get_location()
-            # b=xodrmap.transform_to_geolocation(a)
+            # a = vehicle.get_location()
+            # b = xodrmap.transform_to_geolocation(a)
             # print(a)
             # print(b)
             # time.sleep(0.15)
@@ -118,7 +124,7 @@ def main(args):
         print('\nCancelled by user. Bye!')
 
     finally:
-        if original_settings:
+        if original_settings and world is not None:
             world.apply_settings(original_settings)
 
         for sensor in sensors:
@@ -130,10 +136,33 @@ def main(args):
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='CARLA ROS2 native')
-    argparser.add_argument('--host', metavar='H', default='localhost', help='IP of the host CARLA Simulator (default: localhost)')
-    argparser.add_argument('--port', metavar='P', default=2000, type=int, help='TCP port of CARLA Simulator (default: 2000)')
-    argparser.add_argument('-f', '--file', default='', required=True, help='File to be executed')
-    argparser.add_argument('-v', '--verbose', action='store_true', dest='debug', help='print debug information')
+    argparser.add_argument(
+        '--host',
+        metavar='H',
+        default='localhost',
+        help='IP of the host CARLA Simulator (default: localhost)',
+    )
+    argparser.add_argument(
+        '--port',
+        metavar='P',
+        default=2000,
+        type=int,
+        help='TCP port of CARLA Simulator (default: 2000)',
+    )
+    argparser.add_argument(
+        '-f',
+        '--file',
+        default='',
+        required=True,
+        help='File to be executed',
+    )
+    argparser.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        dest='debug',
+        help='print debug information',
+    )
 
     args = argparser.parse_args()
 
